@@ -4,11 +4,15 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
+Customer Solutions Lead at [1QBit](https://1qbit.com). Passionate about
+quantum computing, software development and agile / lean product development. 
+Interested in building great solutions by building great teams.
 
 ### More Information
+My non-work interests include photography, piano, chess, rock-climbing, 
+backcountry-skiing and exploring the beautiful outdoors of British Columbia.
 
-A place to include any other types of information that you'd like to include about yourself.
+
 
 ### Contact me
 
