@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Advent of Code 2019
-categories: [Programming, TDD]
+categories: [development, TDD]
 ---
 I'm participating again in this year's [Advent of Code](https://adventofcode.com/2019). 
 

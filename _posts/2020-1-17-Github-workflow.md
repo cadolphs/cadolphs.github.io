@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Some common issues in feature-branch Github workflow
+categories: [development]
 ---
 
 This article is a quick overview of the github workflow I currently use with my team. It is mostly for a quick reference to team members about what to do in some of the rarer situations.
