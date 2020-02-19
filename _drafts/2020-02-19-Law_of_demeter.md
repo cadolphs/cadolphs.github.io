@@ -24,10 +24,11 @@ Anything else is considered off limits! In particular, if one of the methods tha
 
 When violating the LoD, you are sprinkling unrelated structural knowledge throught your code. Each part of the trainwreck is a piece of knowledge that you assume you have: "In this code, cars have owners, which have addresses, which have postal codes, and they are accessed through these particular methods." Your trainwreck introduces coupling where it might not be wise to do so. 
 
-## Some caveats and nuances
+### Some caveats and nuances
 
 Of course, nothing is ever quite as black and white, so let's unpack a few important points about the law.
 
 First, you can technically get around the law by introducing wrapper methods: You could add a method `getOwnerAddressesPostalCode()` to the car object. But in a sense you're still violating the law. Maybe not its text, but definitely its spirit: You are still coupling a postal code to a car where it might be ill-advised.
 
-Second, contrary what you sometimes read on articles on the subject, the LoD is not [a dot-counting exercise](https://haacked.com/archive/2009/07/14/law-of-demeter-dot-counting.aspx/). This cuts both ways: On the one hand, just because you don't have multiple dots per line doesn't mean you don't violate the law (see above's lengthy wrapper method). On the other hand, just because you _do_ have multiple dots per line doesn't mean you _are_ violating it. For starters, a method you call might be returning an object that, in turn, is on the list of allowed objects. This is an important feature of so-called _fluent_ interfaces.
+Second, contrary what you sometimes read on articles on the subject, the LoD is not [a dot-counting exercise](https://haacked.com/archive/2009/07/14/law-of-demeter-dot-counting.aspx/). This cuts both ways: On the one hand, just because you don't have multiple dots per line doesn't mean you don't violate the law (see above's lengthy wrapper method). On the other hand, just because you _do_ have multiple dots per line doesn't mean you _are_ violating it. For starters, a method you call might be returning an object that, in turn, is on the list of allowed objects. This is an important feature of so-called _fluent_ interfaces. But even if an object doesn't strictly fall on above's list of allowed objects, it might still make sense to call methods on it: If that object is a _friend_ of yours.
+
