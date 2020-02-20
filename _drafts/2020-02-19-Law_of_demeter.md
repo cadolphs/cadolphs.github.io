@@ -1,5 +1,8 @@
 ---
 published: false
+title: The Law of Demeter - Don't let your classes micromanage each other
+layout: post
+categories: development
 ---
 ## Don't let your classes micromanage each other
 
