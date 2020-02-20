@@ -60,3 +60,5 @@ def f(self, b, a):
 ```
 
 And finally, a larger redesign of which objects exist and how they talk to each other might be in order. The guiding principle here goes back to the beginning of the post: Don't micromanage. What is it you want to accomplish? Whose responsibility is that? Tell them, but leave the execution details up to them!
+
+Another great StackOverflow [post](https://softwareengineering.stackexchange.com/a/284146/161522) by user candied_orange talks about the SOLID design principles. In particularly the "Single Responsibility Principle" and the "Dependency Invesion Principle" (more on these later, maybe?) take you in great strides towards code that automatically won't violate the Law of Demeter.
