@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Practical Object Oriented Design - Book Notes - Chapter 2
+title: Practical Object Oriented Design - Book Notes - Chapter 3
 categories: [development]
 ---
 
