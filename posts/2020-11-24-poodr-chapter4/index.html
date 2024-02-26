@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <header>
+        <h1>Practical Object Oriented Design - Book Notes - Chapter 4</h1>
+    </header>
+    <main>
+        <p>This is the fourth part in my review and reading notes on the Practical Object Oriented Programming book (www.poodr.com) by Sandi Metz.</p>
+<p>Okay now it's getting interesting: OOD is about <em>messages</em> more than <em>classes</em>.</p>
+<ul>
+<li><em>What</em> objects know = Their responsibilities</li>
+<li><em>Who</em> objects know = Their dependencies</li>
+<li>How classes <em>talk</em> to each other = The messages and their <em>interfaces</em></li>
+</ul>
+<h1>Understanding Interfaces</h1>
+<p>Nerd time: Think of classes as nodes in a graph, and of messages as directed edges. Good design has a <em>sparse</em> graph: Any given node should have a relatively low number of outgoing edges, or at least there should be small clusters of higher connectivity, with the clusters in turn being loosely connected to each other.</p>
+<p>More nerd time: If &quot;everybody talks to everybody else&quot;, then with <em>N</em> classes you will have
+O(N^2) edges. That is, the number of communication paths grows quadratically with the number of classes. That quickly becomes overwhelmingly complex.</p>
+<p>Hyper-connected objects are difficult to reuse and change.</p>
+<p>Instead, low-connected components allow easy reuse and low-consequence change.</p>
+<p>High-density message graph is <em>not</em> necessarily the result of failed dependency injection or single responsibility! You can easily design an application that follows those principles while still ending up with a dense message graph.</p>
+<p>Problems aren't with what the class <em>does</em> but with what it <em>reveals</em>. To arrive at a low-density message graph, you need to <em>constrain</em> which messages can pass between objects.</p>
+<p>In some programming langauges, a class can explicitly declare its methods to be either public or private. In Python, though, all class attributes and methods are public. There is, however, a <em>convention</em> which states that, as a programmer, you should treat attributes and messages that start with an underscore <em>as if</em> they were private. That is: Don't depend on their behavior, don't depend even on their existence. With the underscore prefix, you signal to other programmers and to yourself that this message is not part of the class's public interface.</p>
+<p>In this chapter, <em>interface</em> refers to the methods <em>within</em> a class, as opposed to the more abstract concept of interface we'll talk about in the next chapter.</p>
+<h1>Defining Interfaces</h1>
+<p>The author gives a great example of an interface that hides complex implementation details with the restaurant kitchen analogy. Another example I can think of: The devices we use every day also have devices that hide the implementation details. I don't need to know anything at all about electronics to use a TV. I don't need to know anything about how an internal combustion engine <em>actually</em> works to drive a car. The interface provides me with means of telling the device <em>what</em> I want from it (go faster, slow down, go left, go right) without me having to bother at all <em>how</em> this behavior is achieved.</p>
+<h2>Public Interfaces</h2>
+<p>Just some bullet points here.</p>
+<ul>
+<li>Public methods = Face of your class</li>
+<li>Tell you what it's primary responsibility is</li>
+<li>Are <em>expected</em> to be invoked by others</li>
+<li>Will <em>not</em> change on a whim.</li>
+<li>Are (more or less) safe for others to depend on.</li>
+<li>Are thoroughly documented in tests.</li>
+</ul>
+<h2>Private Interfaces</h2>
+<p>All other methods = private interface</p>
+<ul>
+<li>Handle implementation details</li>
+<li>Are <em>not</em> expected to be sent by other objects</li>
+<li>Chan change for any reason whatsoever</li>
+<li>Are <em>unsafe</em> for others to depend on</li>
+<li>May not even be referenced in tests</li>
+</ul>
+<h2>Responsibilities, Dependencies, and Interfaces</h2>
+<ul>
+<li>If a class has a single <em>purpose</em>, then things it does (its specific <em>responsibilities</em>) are what allow it to fulfill that purpose.</li>
+<li>Public methods = description of its responsibilities.</li>
+<li>Public interface is a <em>contract</em>.</li>
+<li>Example of Stack: <code>push</code> and <code>pop</code> is pretty much all you need. Internal details should be hidden.</li>
+<li>Remember: Depend on things that are more stable than you. Applies to classes (previous chapter) but also applies to methods. What's that mean? Don't <em>depend</em> on private methods.</li>
+</ul>
+<h1>Finding the Public Interface</h1>
+<ul>
+<li>It's an art</li>
+<li>No hard rules</li>
+<li>Recall the design goal: Maximum future flexibility with not too much work right now.</li>
+<li>Now some rules of thumb and a new tool: Sequence Diagrams.</li>
+</ul>
+<h2>Example</h2>
+<p>Author introduces an example <em>domain</em>. I won't repeat that here.</p>
+<h2>Constructing an Intention</h2>
+<p>Here author has a bit of a discussion on &quot;test first&quot; programming, also called TDD for Test-Driven Design. The idea of that design technique is to write unit tests first, and let the tests guide you into what code to write for your program. However, as the author argues, that often does not end well for <em>novices</em> to design, because if you don't know <em>which</em> tests to write, and <em>how</em> to write them, they cannot possibly guide you to a good design.</p>
+<p>Once you have acquired good design experience and intuition, you will know which tests to write to hone in on the specific design that will work well for your given situation.</p>
+<p>The authors calls this &quot;having an <em>intention</em> about the application&quot;: To write test-first in a good way, you need to know: &quot;I want my object to have this method, which should exhibit this behavior&quot;.</p>
+<p>Going a step further: Before writing these tests you also need an idea about <em>which</em> objects you will have. Novices focus overly on the <em>domain objects</em>. The concrete, tangible things. The <em>nouns</em> of the domain, if you will. What is more important, though, is what <em>message</em> you intend to pass between these objects!</p>
+<p>So before you do anything, figure out what objects <em>and</em> what messages you'll be dealing with.</p>
+<h2>Sequence Diagrams</h2>
+<p>How do we sketch out what messages we're dealing with? Sequence diagrams! Subset of UML (Unified Markup Language) diagrams. I won't repeat the chapter content and diagrams here, just pointing out that there's a free Sequence Diagram Tool here:
+https://sequencediagram.org/</p>
+<p>Why are these diagrams so great? Because they force you to be clear about which messages you are going to send. That, in turn, allows you to ponder whether you're sending them from and to the right objects. And since you're only supposed to send messages that are in the public interface of classes, the diagram helps you figure out what the public interface should be.</p>
+<p>Let's emphasize this: Instead of deciding on a class, and <em>then</em> figuring out what its responsibilities are, you decide on a <em>message</em> you want to send, and then figure out who should send it, and where to.</p>
+<p>I'll quote:</p>
+<blockquote>
+<p>This transition from class-based design to message-based design is a turning point in your design career. The message-based perspective yields more flexible applications than does the class-based perspective. Changing the fundamental design question from “I know I need this class, what should it do?” to “I need to send this message, who should respond to it?” is the first step in that direction.</p>
+</blockquote>
+<blockquote>
+<p>You don’t send messages because you have objects, you have objects because you send messages.</p>
+</blockquote>
+<p>When focusing too much on classes, we risk that our messages aren't sent to the right place.</p>
+<p>The book then goes through a concrete example involving a bicylce trip agency and how a sequence diagram can help identify issues with the objects and messages.</p>
+<h2>Asking For &quot;What&quot; Instead Of Telling &quot;How&quot;</h2>
+<p>One such issue is about messages that are too explicit in what exact behavior they want to see.</p>
+<p>You want to be sending messages that tell the receiver what sort of result you want from them. You want to avoid sending messages that tell the receiver how to behave.</p>
+<p>In the restaurant example, you tell the waiter which dish you would like. You don't tell the waiter &quot;Please write this dish and my table number onto this note and then go put that note onto the stack of kitchen orders and then wait for the chef to make the order and then bring it to me&quot;.</p>
+<p>The book example explains this via the bicycle mechanic class. In a first version, the trip class explicitly states all the different actions that a mechanic should take to prepare a bike. This is a case of telling &quot;how&quot;.</p>
+<p>A good test to see if your design falls into this trap is to imagine your classes again as people, where a message is like an order or request. Now imagine the sequence diagram as a conversation between the people. If one class feels like it's a tyrannical micro-manager toward another, you need to rethink your design!</p>
+<p>If your messages instead focus on the high-level tasks and results you want to see, the object that sends the message needs to know much less, and the object that performs the task can have a much smaller public interface.</p>
+<h2>Seeking Context Independence</h2>
+<p>An object's <em>context</em> is formed by all the things it expects to be in place and available to perform its job. Typically, this context involves what sort of messages your object expects to be able to send to other objects, with some assumptions about the behavior.</p>
+<p>Look again at the toy example from my previous writeup, with dependency injection:</p>
+<pre><code class="language-python">class A:
+	def __init__(self, job_helper):
+		self.job_helper = job_helper
+		
+	def do_your_job(self, arg1, arg2):
+		intermediate_result = job.process(arg1, arg2)
+		return self.some_more_processing(intermediate_result)
+	
+	...
+</code></pre>
+<p>Here, the <em>context</em> of class <code>A</code> is &quot;an object that understands the <code>process(arg1, arg2)</code> message&quot;.</p>
+<p>Obviously, the bigger an object's context, the harder it is to use, re-use, and test the class, because you first need to <em>create</em> the correct context. This suggests that good design seeks to write classes that require only a small context. The <em>best case scenario</em> of course is a class that is context-independent.</p>
+<p>To be context-independent means being able to cooperate with other objects without knowing <em>who they are</em> and <em>what they do</em>. Using dependency injection takes care of the <em>who</em> part. Rethinking the sequence of messages, and working toward simplifying the messages, takes care of the <em>what they do</em> part.</p>
+<p>I like the author's example here with the Trip and the Mechanic. The key technique the example in this subsection introduces is: You can simplify (and thus potentially unify) the message you send to your collaborator by <em>not</em> passing in lots of arguments, but rather having a public interface that lets your collaborator ask you for those arguments themselves.</p>
+<p>Maybe we can use the restaurant example again:
+<img src="/images/poodr_4/burger_1.png" alt="Sequence Diagram for ordering a burger explicitly"></p>
+<p>Here we see a Customer ordering a burger, which needs a bit of extra info about the side dish. Sending messages like this requires having a method for each of the different things you could order in different ways. It means <code>Customer</code> expects in its context an object <code>Waiter</code> that understands all sorts of messages.</p>
+<p>If we have our objects collaborate more, however, we can have a simpler context:
+<img src="/images/poodr_4/burger_2.png" alt="Sequence Diagram for ordering a burger with less context"></p>
+<p>and we'd imagine that it's the customer's interface's job to provide methods to inquire about certain preferences, like doneness of a steak, whether Pepsi is okay, and if there's allergies.</p>
+<h2>Trusting Other Objects</h2>
+<p>In the real world, you are only comfortable asking for the what without specifying the how if you have trust that your counterpart is capable of fulfilling that request. When writing your own classes and objects, you should always trust an object that it is capable of fulfilling its responsibility!</p>
+<p>As the author argues, the various sequence diagrams of the section show how a programmer's understanding and use of objects improves over time:</p>
+<p>The first stab is essentially <em>procedural</em>. In a purely procedural program, you have some <code>main()</code> routine that, in sequence, calls the various procedures (functions) it needs to get its job done. Just because you put your <code>main</code> into one class and all the procedures it calls into another class does not make your code truly object oriented!</p>
+<p>In the next version, the detailed knowledge of which functions to call in what order to accomplish a given task has been moved to the correct class. The &quot;main&quot; class asks the helper class to achieve a specific result, but does not itself specify how that is achieved.</p>
+<p>In the final version, the <em>context</em> of the main class is reduced further. The difference in the author's example between <code>prepare_bicycle(bike)</code> and <code>prepare_trip()</code> is subtle but profound. Preparing a trip, rather than preparing a bike, is a more <em>general</em> concept. As such, it is more stable and more reusable. We <em>trust</em> that the Mechanic class itself knows that, in order to prepare a trip, it must prepare a bike.</p>
+<p>The impact of this subtle shift becomes more visible when we imagine that a trip has many different things that need to be prepared other than getting bikes ready. Code quickly becomes messy if we have to send specific &quot;you prepare this, and you prepare that&quot; messages to all the different classes that help us get ready for a trip. Much better if we can just send each class the same <code>prepare_trip</code> message and the classes themselves know what to do.</p>
+<h2>Using Messages to Discover Objects</h2>
+<p>The sequence diagrams should be understood as lightweight, temporary, throw-away tools that help us discover which objects our application needs. We do this by examining what types of messages are reasonable to <em>send</em> and then carefully scrutizing what sort of object should be responsible for <em>receiving</em> that message.</p>
+<p>This view of putting messages first is incredibly helpful. Focusing too much on the existing objects makes it tempting to just shove messages into whatever objects are already there. Focusing instead of the messages we want to send allows us to create the right class, with the right single responsibility, for handling that message.</p>
+<h1>Writing Code That Puts Its Best Interface Forward</h1>
+<p>In this section, the author shares useful rules of thumb for creating good public interfaces. In any way, you should always <em>think</em> carefully about your interfaces, as they control more than anything else how your codebase will evolve.</p>
+<h2>Create Explicit Interfaces</h2>
+<p>Python has no explicit concept of private versus public methods, but convention says that methods prefixed with <code>_</code> should be <em>considered</em> private and <em>not</em> be depended upon.</p>
+<p>The public methods are those that you want other classes to call and depend on. Therefore, they should be:</p>
+<ul>
+<li>Explicitly identified as such. In Python, that just means <em>not</em> having the <code>_</code> prefix.</li>
+<li>Be more about <em>what</em> than <em>how</em>. Remember to trust your objects.</li>
+<li>Have descriptive names that won't be subject to change, as much as possible.</li>
+<li>Prefer keyword arguments.</li>
+</ul>
+<h2>Honor the Public Interfaces of Others</h2>
+<p>Basically, avoid as much as possible depending on private methods of other classes! In some languages this isn't an <em>option</em>, but Python of course does not prevent you from calling a method just because it was prefixed with the underscore.</p>
+<p>Still, all sorts of alarm bells should be going off in your head if you ever feel tempted to invoke such a &quot;private&quot; method. The person who wrote that class's interface decided to mark that method as private for a reason: It is considered an internal detail of the class, subject to change at a whim, with no promises made to preserve the private method.</p>
+<p>Chances are, when you find yourself calling a private method, that you're telling a class <em>how</em> to do something rather than asking it for <em>what</em> you want done. Rethink your design!</p>
+<p>If you are convinced that it absolutely cannot be avoided to call a private method, isolate this dangerous dependency from the rest of your code base so that the private method is referenced from only one place, instead of all over your application.</p>
+<h2>Minimize Context</h2>
+<p>As discussed above, a class's context is the set of other classes and things that are required to be in place before a class can actually do its job. Smaller is better. In terms of a public interface, then, this means providing public methods that allows senders to get what they want without having to spell out the steps needed to get there.</p>
+<p>Basically, if you don't want your class to be micro-managed by other classes, it is your job to provide methods that represent high-level results instead of low-level actions.</p>
+<p>If you have to use someone else's class with a poor public interface, you should also consider putting in the work to wrap the bad interface into a class or method that provides a better interface.</p>
+<h1>The Law of Demeter</h1>
+<p>I have talked about this before on this site so I won't go into too much detail again. I like the author's nuanced approach to the law so I will comment on that a bit.</p>
+<p>The Law of Demeter, in short, says to avoid <em>train wrecks</em> of long chains of methods. But there are subtleties to conisder.</p>
+<h2>Consequences of Violations</h2>
+<p>Whenever someone states that there's a law you shouldn't violate, a natural question to arise is: &quot;Or else?&quot;.</p>
+<ul>
+<li>A long message chain increases coupling between distant objects. Ask yourself if that coupling is appropriate and unavoidable.</li>
+<li>Depending on a long message chain increases an object's <em>context</em>: More things need to be correctly in place, making reuse and testing cumborsome!</li>
+</ul>
+<p>There's a few different <em>types</em> of message chains, and the law's importance depends on that type.</p>
+<ul>
+<li>You could be retrieving a <em>stable attribute</em> via some intermediate objects. In this case, balance the cost of removing the violation against the likelihood of this chain breaking.</li>
+<li>You could be invoking distant behavior. This is most likely a situation where you are telling <em>how</em> rather than <em>what</em>, and hints at a deficient public interface. More on this later.</li>
+<li>You could be chaining together methods that have the same return type; often called a <em>fluid interface</em>. In this case, all is fine, as the Law of Demeter only concerns method chains with different objects along the chain.</li>
+</ul>
+<h2>Avoiding Violations</h2>
+<p>Sometimes when the Law of Demeter is discussed, <em>delegation</em> is sold as the way to avoid the violation:</p>
+<pre><code class="language-python">class A:
+	def get_something(self):
+		...
+		return some_object
+	
+class B:
+	def do_something(self):
+		...
+		
+# Some code:
+A().get_something().do_something() # Law of Demeter violation
+</code></pre>
+<p>The idea of delegation is that we move the message chain into the classes:</p>
+<pre><code class="language-python">class A:
+	def get_something(self):
+		...
+		return some_object
+	
+	def do_something(self):
+		return self.get_something().do_something()
+	
+class B:
+	# unchanged
+	
+# Some code:
+A().do_something() # Hah! No Law of Demeter violation!
+</code></pre>
+<p>At times, this can be the appropriate course of action, but pay attention! You might still be violating the law <em>in spirit</em> if not in letter. Thinking back to our discussion about messages and their appropriate senders and receivers, does it <em>make sense</em> for <code>A</code> to receive this particular <code>do_something</code> message?</p>
+<h2>Listening to Demeter</h2>
+<p>What the Law of Demeter <em>really</em> wants to tell us is that we are either missing objects, or methods, that would allow our objects to communicate in a more useful way! According to the author, these <em>train wrecks</em> happen if we focus too much on the objects we already have: This leads us to chain method calls together to assemble some desired behavior. If instead we focus on the <em>messages</em> that we <em>should</em> be sending, we will discover which objects need to receive them:</p>
+<p>In the preceding examples, we discussed why it's bad if one class tells another class in too much detail exactly what to do. Even worse, then, is if we have one class that tells another class to tell another class exactly what to do.</p>
+
+    </main>
+</body>
+
+</html>

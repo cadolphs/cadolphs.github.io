@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <header>
+        <h1>Some common issues in feature-branch Github workflow</h1>
+    </header>
+    <main>
+        <p>This article is a quick overview of the github workflow I currently use with my team. It is mostly for a quick reference to team members about what to do in some of the rarer situations.</p>
+<h1>Basic setup</h1>
+<ul>
+<li>Development happens in feature branches that are then squash-merged into a branch <code>develop</code> after a pull request.</li>
+<li>Before sending a PR, a feature-branch should be <strong>rebased</strong> onto <code>develop</code></li>
+<li>It is encouraged that PRs are small but complete.</li>
+</ul>
+<h1>The simplest case</h1>
+<p>Let’s consider a branch <code>feature1</code> with a bunch of commits to be merged into <code>develop</code>. The easiest case has that branch live in isolation: no other branches branch off of <code>feature1</code>.
+In this case, all that needs to happen is:</p>
+<p>git checkout feature1
+git rebase -i origin/develop   ## use this step to clean up commit history a bit
+git push -f</p>
+<p>And then we create the pull request on github. If everybody is happy, it will be squashed and merged. The branch <code>feature1</code> can now safely be deleted.</p>
+<h2>What squash-and-merge does</h2>
+<p>This takes all the commits from the feature branch, creates a new commit that contains all their collective changes, and applies that commit to the develop branch. That way, develop has one commit per pull request.
+This also means that the two branches now diverge: <code>feature1</code> has a bunch of commits, whereas <code>develop</code> only has one commit. Git doesn’t know that these are essentially the same changes. In the simple case, this doesn’t matter, because we’re deleting <code>feature1</code> anyway!</p>
+<h1>Hard case 1: Extra development after rebase</h1>
+<p>Consider this scenario: Branch <code>feature1</code> has been rebased onto <code>develop</code> and sent off for a pull request. After this step, a new branch <code>feature2</code> was created off of <code>feature1</code> to continue some development that relied on the new feature introduced in <code>feature1</code></p>
+<p><img src="https://paper-attachments.dropbox.com/s_FE834B07340B42F115869E47B3A6D36A022DFDF5AFB60F065BB8B3DFF3BFD3B8_1579294479316_image.png" alt=""></p>
+<h2>Case 1: PR gets accepted without changes</h2>
+<p>Awesome work, no changes. So let’s do the squash-merge. Remember, this creates a new commit:</p>
+<p><img src="https://paper-attachments.dropbox.com/s_FE834B07340B42F115869E47B3A6D36A022DFDF5AFB60F065BB8B3DFF3BFD3B8_1579294835786_image.png" alt=""></p>
+<p>So far so good. Now let’s say we’re done with our work on <code>feature2</code> and want to rebase onto <code>develop</code> prior to sending a pull request. If we do this naively, this is what happens:</p>
+<p><img src="https://paper-attachments.dropbox.com/s_FE834B07340B42F115869E47B3A6D36A022DFDF5AFB60F065BB8B3DFF3BFD3B8_1579294937380_image.png" alt=""></p>
+<p><strong>YIKES.</strong> Remember that, due to the squash-merge, commit C5 contains the work that was done in commits C2 and C3. But git doesn’t keep track of that. So if we tell it to rebase <code>feature2</code> onto <code>develop</code>, it will grab <em>all</em> commits from <code>feature2</code> that weren’t part of develop. This means C2, C3, and C4. Then it creates new commits that apply those same changes onto <code>develop</code>.
+<strong>The correct way:</strong>
+In our case, we really only want the commit C4 to be taken from <code>feature2</code> and applied to <code>develop</code>. The way to achieve this is the <code>--onto</code> option of <code>git rebase</code>. Here is what we should have done:</p>
+<p>git checkout feature2
+git rebase --onto develop feature1
+git push -f</p>
+<p>What is this? It tells git to:</p>
+<ul>
+<li>Take those commits from <code>feature2</code> that are ahead of <code>feature1</code>. In this case, C4.</li>
+<li>Apply those commits as new commits to <code>develop</code> instead of <code>feature1</code>.</li>
+<li>Make <code>feature2</code> point to the latest of those new commits.
+<img src="https://paper-attachments.dropbox.com/s_FE834B07340B42F115869E47B3A6D36A022DFDF5AFB60F065BB8B3DFF3BFD3B8_1579295868424_image.png" alt=""></li>
+</ul>
+<p>(The git playground doesn’t support these sophisticated commands, so instead of saying C4’ it says C6).
+Now C6 contains the changes of C4, but applied to develop.</p>
+<h2>Case 2: Extra changes to feature1</h2>
+<p><img src="https://paper-attachments.dropbox.com/s_FE834B07340B42F115869E47B3A6D36A022DFDF5AFB60F065BB8B3DFF3BFD3B8_1579295694877_image.png" alt=""></p>
+<p>Here our PR in <code>feature1</code> got accepted with some revisions. C6 now contains the work of C2, C3, and C5. On the other hand, <code>feature2</code> has diverged from <code>feature1</code>.
+There’s two ways to deal with this. Let’s do the one that’s easier conceptually: If <code>C4</code> was coming <em>after</em> C5, we could use the solution of the previous chapter. So let’s make it so:</p>
+<p>git checkout feature2
+git rebase feature1
+git rebase --onto develop feature1
+git push -f</p>
+<p>The first two lines give</p>
+<p><img src="https://paper-attachments.dropbox.com/s_FE834B07340B42F115869E47B3A6D36A022DFDF5AFB60F065BB8B3DFF3BFD3B8_1579296061588_image.png" alt=""></p>
+<p>which is the same as in the previous chapter, so the rebase-onto works.</p>
+<p>But if we think about it for a bit, we could have skipped that intermediate step and just used the <code>rebase</code> <code>--``onto</code> from the start: Our first rebase grabs C4 and makes a new commit that makes it apply to <code>feature1</code>. The next rebase grabs C4’ and makes that apply to <code>develop</code>. So why not just grab C4 and apply that directly to develop? So then the faster version is</p>
+<p>git checkout feature2
+git rebase --onto develop feature1
+git push -f</p>
+<h1>Hard case 2: Multiple people on branch</h1>
+<p>There are several pitfalls with this, but they can all be avoided with proper care. Let’s take a look:</p>
+<h2>Beware the rebase</h2>
+<p>Rebasing a branch changes the commits in its history. That’s why, after a rebase, you have to push with the <code>-f</code> (force!) option. It also means that, once it’s been pushed, anybody who was also working on that branch now has a local version that’s in conflict with the remote version.
+<strong>Important:</strong> Before doing a rebase on a branch with multiple collaborators, let everybody know! Make sure everybody’s local changes are integrated (see below) and all local branches are up to date with the origin. Then do the rebase and force-push. After that, everybody else needs to run</p>
+<p>git checkout branch_that_was_rebased
+git fetch --all
+git reset --hard origin/branch_that_was_rebased</p>
+<p>This makes your local version of the branch the same as the remote version that was just forcefully pushed</p>
+<h2>Don’t create a bajillion merge commits</h2>
+<p>Let’s say you and your buddy are working on the same branch (but on different files). You are constantly committing, pushing, and pulling. Now each time there were “simultaneous” commits and you do a git push / pull, you’ll create extra merge commits:</p>
+<p><img src="https://paper-attachments.dropbox.com/s_FE834B07340B42F115869E47B3A6D36A022DFDF5AFB60F065BB8B3DFF3BFD3B8_1579297102356_image.png" alt="Real work was done in C2 and C3, whereas C4 is just a merge commit"></p>
+<p>The reason is this: You can’t push your local branch to origin unless it’s a “fast forward”, i.e., there’s no changes in the origin that you don’t have locally. One way to get those remote changes is <code>git pull</code>. This is nothing other than a <code>git merge</code> of the remote commits into your local branch, so unless it’s again a simple fast-forward, it’ll create an extra merge commit. A productive coding session can create quite a few of those, and they’ll needlessly clutter up the commit history.</p>
+<p>Ideally, we want merge commits to have “real” meaning, as in “this new feature was developed in this branch and upon completion merged into our development branch”. It shouldn’t reflect minute details of who worked on what file in the run-up to it.</p>
+<p><strong>The solution:</strong> Use <code>git pull</code> <code>--``rebase</code> instead. This tells <code>git</code> to take the remote changes and replay your local changes on top of them:</p>
+<p><img src="https://paper-attachments.dropbox.com/s_FE834B07340B42F115869E47B3A6D36A022DFDF5AFB60F065BB8B3DFF3BFD3B8_1579297414683_image.png" alt="Before the git pull --rebase">
+<img src="https://paper-attachments.dropbox.com/s_FE834B07340B42F115869E47B3A6D36A022DFDF5AFB60F065BB8B3DFF3BFD3B8_1579297500275_image.png" alt="After the git pull --rebase"></p>
+<p>Since we’re rebasing, there won’t be a separate merge commit, and now we can use <code>git push</code> without problem, since it’ll be a simple fast-forward.
+<strong>Note:</strong> In the previous section I talked about the pitfalls of a rebase when multiple people were using a branch. This does <strong>not</strong> apply to <code>git pull</code> <code>--``rebase</code>. It is completely safe to use, because it only affects exactly those commits that are currently on your machine and not on remote.</p>
+
+    </main>
+</body>
+
+</html>

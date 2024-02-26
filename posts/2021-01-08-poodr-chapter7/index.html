@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <header>
+        <h1>Practical Object Oriented Design - Book Notes - Chapter 7</h1>
+    </header>
+    <main>
+        <p>This is the seventh part in my review and reading notes on the Practical Object Oriented Programming book (<a href="http://www.poodr.com">www.poodr.com</a>) by Sandi Metz.</p>
+<p>Now so far it was relatively easy to talk about Python even though the book is written from a Ruby perspective. This chapter is the first big deviation. Modules, in Ruby, are something altogether different from Python modules. They are most closely related to the idea of a <em>mixin</em> class: A collection of methods that you can add into an existing class. These modules are <em>a bit like</em> multiple inheritance, so let's start with a very brief detour on that.</p>
+<h1>Multiple Inheritance</h1>
+<p>Lots can be written about multiple inheritance, but we try and keep it brief. Multiple inheritance is the concept of a given class having not one, but <em>several</em>, base classes. Some languages have it (C++, Python) and some don't (Java, Ruby). Those languages that made the conscious choice not to offer multiple inheritance do so because it comes with <em>lots</em> of potential for confusion.</p>
+<p>If we recall that inheritance is a form of <em>automated message delegation</em>, we can immediately see where such confusion comes from: If <code>A</code> inherits from both <code>B</code> and <code>C</code>, then to which class's method does <code>A</code> delegate, in what order? This is called the <em>method resolution order</em>, or MRO. In single-inheritance languages, this is easy to compute: You delegate first to your immediate super-class, then if the super-class doesn't implement that method either, you look further up along the chain. With multiple inheritance, though, instead of a chain we have a <em>graph</em>, with potentially multiple paths.</p>
+<h2>Ruby Modules</h2>
+<p>So how are modules &quot;kind of&quot; like multiple inheritance? They allow your class to automatically delegate messages to these modules (which are <em>not</em> classes). And how is that different from <em>ordinary</em> multiple inheritance? Because of the clear distinction between modules and classes, it is always possible to <em>unambiguously</em> define the method resolution order, without confusion: When calling a method of an object, that object first checks its own methods. Then it checks, in the order of their inclusion, the modules it incorporates (and any modules that those modules in turn might incorporate). If that fails, it will move on to its superclass and check that class's methods, and the modules included by that class. There is never any &quot;branching&quot; that happens, and the famous &quot;diamond&quot; problem (A inherits from B and C, which in turn both inherit from D) cannot occur.</p>
+<h2>Python Multiple Inheritance</h2>
+<p>Python goes a different route. It allows multiple inheritance, and it uses a specific algorithm (called C3) to come up with a method resolution order. The full algorithm is quite complicated, <em>but</em> I would argue that creating an inheritance graph where the MRO is not immediately obvious should be considered a <em>code smell</em> anyway. The main thing to take away is that the order matters: <code>class A(B, C)</code> and <code>class A(C, B)</code> will behave differently. In the first case, the MRO is <code>A -&gt; B -&gt; C</code> whereas in the second case it is <code>A -&gt; C -&gt; B</code>.</p>
+<p>The author's goal in this chapter is to explain not just how inheritance works, but also if it makes sense to use it. More on that, too, in the next chapter.</p>
+<h1>Understanding Roles</h1>
+<p>In the previous chapter, we saw how inheritance can be used to re-use code by moving the general concepts into an abstract superclass and then having concrete subclasses provide specializations as needed. This type of hierarchy <em>also</em> brings with it a strong semantic component: The subclasses form an <em>is-a</em> relationship with the superclass.</p>
+<p>Sometimes, though, you want to share behavior among otherwise unrelated objects, where there is no <em>is-a</em> relationship. We want to share behavior and re-use code without that semantic coupling that a subclass / superclass relationship involves. Let's follow along with the author.</p>
+<h2>Finding Roles</h2>
+<p>Objects have a type, defined by what class they're an instance of. But objects also<br>
+play <em>roles</em>, and a single object might, depending on the context, play many different roles. In the previous &quot;bike shop&quot; examples, a <code>Mechanic</code> might play the <em>role</em> of a trip preparer, but it might also play some other roles. So we see that the previously mentioned <em>duck types</em> are examples of roles: Many otherwise unrelated objects might play the same role if they all implement the same duck type.</p>
+<p>Now with many roles, it happens that there'll be a corresponding counter-part role: If there's a <code>Preparer</code> then there's (probably) also a <code>Preparable</code> role: If you recall, the <code>Mechanic</code> class needed to ask the trip for a list of bicycles. So a <code>Preparable</code> should have a method like <code>get_bicycles()</code>.</p>
+<p>The special thing about roles based on duck types is that they are defined <em>purely</em> by their interface. But it is easy to imagine that there are roles that are more complex and require specific <em>behavior</em>, not just a specific <em>public interface</em>. If there's shared behavior, we want to avoid just repeating it in the code. Think DRY (don't repeat yourself). So how do we organize this code that represents the shared behavior?</p>
+<ul>
+<li>In Ruby, <em>modules</em> are groups of methods that are independent of class and can be <em>mixed in</em> to another class.</li>
+<li>In Python, you'd use multiple inheritance, but with certain self-imposed restrictions to avoid creating a tangled mess of a class hierarchy: You would bundle the shared code in a class with <code>Mixin</code> in its name to signify that it's meant to be <em>mixed in</em>.</li>
+</ul>
+<p>The self-imposed restrictions on multiple inheritance in Python are modeled after the way Ruby modules work: Since a module isn't a class, you cannot <em>instantiate</em> a module. In a similar way, a Python Mixin class is not <em>meant</em> to be instantiated. We'll see some concrete examples later on.</p>
+<h2>Organizing Responsibilities</h2>
+<p>Here we follow along as the author walks us through another example. I like how she follows the progression of how one might initially tackle a given problem and then discusses how the design can be improved.</p>
+<p>In this example, we're looking at scheduling, which means we'll have a <code>Schedule</code> class, right? Okay, and then this class is responsible for <em>scheduling things</em>. Different things might have different constraints around being scheduled. In the current example, there's a certain amount of <em>lead time</em> involved.</p>
+<p>In a first version, some object asks the <code>Schedule</code> class if some target object could be scheduled. The <code>Schedule</code> class then switches on type (uh oh, code smell!) to decide how many lead days to include in the schedule calculation.</p>
+<p>Well, not to worry, we know all about using duck types to remove these type switches: The things we want to schedule should implement the <code>Schedulable</code> duck type, which means we can <em>ask</em> them how many lead days they need. No more type switching required.</p>
+<p>But according to the author, that's still bad design! Here's the logic:</p>
+<ul>
+<li>Some <em>instigating object</em> wants to know if <code>target</code> is schedulable.</li>
+<li>So why not ask the <code>target</code> directly? Let objects speak for themselves!</li>
+</ul>
+<p>The author uses a great example to show why this is a much better design than using the <code>Schedule</code> class. I'll translate it to Python. If you have a python string, you can call all sorts of useful methods on that string: Convert to upper-case, split into multiple strings based on some delimiter, and so on. It would be very un-pythonic (and un-OOD) to have a string just be a dumb (i.e. no useful methods) holder of bytes and move all the string manipulation into a <code>StringUtil</code> class.</p>
+<p>Great, so how do we go about this? As with classical inheritance, first we'd implement the role <em>concretely</em> in one of the classes that exhibit that role. So we pick one of the things that we want to be able to schedule, and implement the <code>can_schedule</code> method there. Then we refactor and move the <em>general</em> things <em>up</em> the hierarchy. In Ruby, we'd use a module. In Python, we'd use a Mixin class.</p>
+<p>The &quot;techniques&quot; are the same as with inheritance, really: Use hook methods, promote abstractions up the hierarchy instead of pushing concretions down. And think of Mixins as &quot;behaves as&quot; instead of &quot;is a&quot;.</p>
+<p>How to go about this?</p>
+<ul>
+<li>First implement the role concretely in one of the classes that should exhibit the role</li>
+<li>Then refactor to move things &quot;up&quot; the hierarchy.</li>
+<li>In Ruby, use module</li>
+<li>In Python, use multiple inheritance</li>
+</ul>
+<p>Use all the same techniques! Hook methods! Promoting abstractions up instead of pushing concretions down.</p>
+<p>Think of mix-ins as &quot;behaves as&quot; instead of &quot;is-a&quot;.</p>
+<p>Now let us conclude this section by writing a Python Mixin that roughly does what the Ruby module in the author's example does: So we identified that there is a <em>role</em> for objects to be <code>Schedulable</code>, which means they should implement the two methods <code>is_scheduled(start_date, end_date)</code> and <code>can_schedule(start_date, end_date</code>. But really, for pretty much all the objects playing this role, the <em>behavior</em> will be generally the same: There are some lead days to take into account and then we just look it up. So we also add a <code>lead_days</code> method, meant to be overridden by classes who include the mixin. Here's how it would look:</p>
+<pre><code class="language-python">class SchedulableMixin: # (1)
+    
+    @property
+    def schedule(self):  #(2)
+        if self.__schedule is None:
+            self.__schedule = Schedule()
+        return self.__schedule
+    
+    def can_schedule(self, start_date, end_date):
+        return not self.is_scheduled(start_date - self.lead_days(), 
+                                     end_date) #(3)
+    
+    def is_scheduled(self, start_date, end_date): #(4)
+        return self.schedule.is_scheduled(start_date, end_date)
+    
+    ## Includers may override: #(5)
+    def lead_days(self):
+        return 0
+</code></pre>
+<p>Let's discuss:</p>
+<ul>
+<li>(1) We add the &quot;Mixin&quot; prefix to make it clear that this isn't meant to be a standalone base class, even though there are no abstract methods.</li>
+<li>(2) To be schedulable, you need to keep track of when you've been scheduled. Moving this <code>Schedule</code> object <em>into</em> the mixin puts the overall responsibiltiy of this on the <code>SchedulableMixin</code> and thus reduces the coupling of classes. Here we use double-underscores to make use of Python's &quot;name mangling&quot; feature: If we had named the field <code>self._schedule</code> instead, and if a class that inherits from <code>SchedulableMixin</code> also happened to have a <code>_schedule</code> field, we would be running into a name clash! With the double-underscore, Python just renames <code>__schedule</code> behind the scenes into <code>_SchedulableMixin__schedule_</code>. So, technically there is still the potential for name clashes if the other class for whatever weird reason also had a field called <code>_SchedulableMixin__schedule_</code>. But if you use such weird names without good reason you've really only got yourself to blame.</li>
+<li>(3) This is the &quot;meat&quot; of the general behavior that all the objects playing the <code>Schedulable</code> role share: You can schedule a schedulable object if it hasn't been scheduled during the start date, including any lead time, up until the end date.</li>
+<li>(4) Now we just delegate to the contained <code>Schedule</code> object (see next chapter for a deep dive into composition).</li>
+<li>(5) In certain languages (Java for example) you can explicitly declare that certain methods may <em>not</em> be overridden. Both Ruby and Python do not have this feature, so we just use comments to explain to users: &quot;This <code>lead_days</code> method is what you should override, but the rest is general logic that probably should remain untouched&quot;. Here we use the hook method technique, as introduced in the previous chapter, to allow classes that inherit from this Mixin to provide their own specialization. The design message then is: Every class that inherits from <code>SchedulableMixin</code> <em>behaves as a</em> <code>Schedulable</code>, and they only differ in their number of lead days.</li>
+</ul>
+<h1>Writing Inheritable Code</h1>
+<p>Sharing inherited behavior without introducing undue coupling or hard-to-extend rigid hierarchies requires very specific coding techniques! Let's take a look at some:</p>
+<h2>Recognize the Antipatterns</h2>
+<p>Your code <em>might</em> benefit from inheritance if...</p>
+<ul>
+<li>You use a variable like <code>type</code> or <code>category</code> or whatever.
+<ul>
+<li>In this case, classical inheritance might be good! (See also here <a href="https://refactoring.guru/replace-type-code-with-subclasses">https://refactoring.guru/replace-type-code-with-subclasses</a>)</li>
+<li>Put common abstraction in base class.</li>
+<li>Provide <em>specializations</em> in the child classes.</li>
+<li>And remember the Liskov Substitution Principle!</li>
+</ul>
+</li>
+<li>A <em>sending object</em> checks class type to decide on what message to send.
+<ul>
+<li>In this case, all the potential receivers play a common <em>role</em>.</li>
+<li>That <em>role</em> is a <em>duck type</em>.</li>
+<li>If duck types share <em>behavior</em> in addition to the interface, realize that via mix-in.</li>
+</ul>
+</li>
+</ul>
+<h2>Insist on the Abstraction</h2>
+<p>The code, both concrete and abstract, that is contained in an abstract superclass must apply to <em>every</em> class that inherits it. No exceptions. There is a code smell named after this: <a href="https://refactoring.guru/smells/refused-bequest">Refused Bequest</a>.</p>
+<p>And why is this a bad code smell? Because faulty abstractions lead to ugly hacks and fragile workarounds. Remember the subcalss relationship: If <code>A</code> inherits from <code>B</code>, then <code>A</code> <strong>is a</strong> <code>B</code>. If <code>A</code> then overrides one of <code>B</code>'s methods to, say, <code>raise NotImplementedError</code> then <code>A</code> basically says &quot;Yeah I'm not <em>really</em> a <code>B</code>&quot;.</p>
+<p>Sometimes the problem can be solved by realizing that in your initial writing of the abstract class you added too much concrete code; code that should better be put into the child classes that actually use it. But sometimes there just isn't a good abstraction. In that case, don't use inheritance. You can still avoid code duplication using other techniques, such as composition (next chapter!).</p>
+<h2>Honor the Contract</h2>
+<p>A subclass does not just inherit the public interface of its superclass. It also inherits the <em>expected behavior</em> of such an interface. In a proper class hierarchy, a subclass promises to be <em>substitutable</em> for its superclass. If <code>A</code> inherits from <code>B</code>, then any method that thinks it's working with a <code>B</code> should do just fine working with an <code>A</code>. Think about what would happen if a subclass <em>wasn't</em> substitutable. Then every bit of code that works with class <code>B</code> now has to explicitly check whether you <em>actually</em> gave it a <code>B</code> or snuck in an <code>A</code> instead, and we're back at being tightly coupled to classes, when the whole point of using inheritance in the first place was to avoid explicit type checks.</p>
+<p>Recall the Liskov substitution principle. A subclass and its methods <em>may</em> accept broader inputs than the superclass, because then it will <em>definitely</em> accept the inputs that are valid for the superclass. And it <em>may</em> return narrower results than the superclass, because then its results will <em>definitely</em> be valid results of the superclass. That way, there can be no nasty surprises. Here is an example:</p>
+<p>Let's say we have a class doing some math work on numbers, with a superclass having methods that accept and return integers, both positive and negative. With the principle above in mind, then, we could think of subclasses working with different numbers:</p>
+<ul>
+<li>A subclass's methods could accept floats as well as integers.</li>
+<li>A subclass's methods might only return <em>positive</em> integers.</li>
+</ul>
+<p>But here are some <em>invalid</em> examples:</p>
+<ul>
+<li>A subclass must not <em>refuse</em> to accept negative integers!</li>
+<li>The subclass cannot <em>return</em> floating point numbers!</li>
+</ul>
+<p>If a subclass did either of those two things, it could not be substituted for the superclass.</p>
+<p>But <em>honoring the contract</em> goes further than just making sure that the types of arguments and return values match. It really means: Make sure nobody who is working with your class hierarchy has to ever explicitly check which particular subclass you passed. To quote the author:</p>
+<blockquote>
+<p>An object should act like it claims to be</p>
+</blockquote>
+<p>I'll leave with this counter-example:</p>
+<pre><code class="language-python">class BlackHole(list):
+    def append(self, x):
+        pass
+</code></pre>
+<p>This class claims that it <em>is a</em> list, but definitely doesn't behave like one...</p>
+<h2>Use the Template Method Pattern</h2>
+<p>We talked about this at length in the previous chapter. This is the best pattern for writing code that is readily inheritable. It forces you to think carefully about what's abstract and what's concrete. The abstract part is the &quot;general algorithm&quot; and the concrete part are the specializations.</p>
+<p>In this case, it also helps to make explicit which methods are meant to be overridden (the template methods) and which methods are part of the &quot;stable&quot; abstract algorithm. In some languages, you can use a keyword such as <code>final</code> to prevent a method from ever being overridden by a subclass, but in Python we can only use comments. (There is a proposal to add such a <code>final</code> qualifier to Python's type hints, but remember that type hints have no effect on the running of the Python program; they're merely annotations and comments for the programmer and some external tools.)</p>
+<h2>Preemptively Decouple Classes</h2>
+<p>If at all possible, avoid writing code that <em>forces</em> an overriding method to call <code>super()</code>. This would lead to strong coupling between the super- and subclass. As we have seen in the last chapter, hook methods are the way to go here: They keep the superclass in control of the algorithm, and absolve the subclasses from having to know about when and how to call the super-version.</p>
+<p>One exception to this, I would say, is the <code>__init__</code> method. In some languages, when you create an instance of a subclass, the constructor of the superclass gets called automatically. This is not the case in Python, and so it's a very common occurrence that your subclass's <code>__init__</code> calls <code>super().__init__()</code>, although you could also consider using a <code>post_init()</code> hook method.</p>
+<p>One note about hook methods, though: They only work in <em>shallow</em> hierarchies, one level deep. If you go deeper, you might have to call <code>super()</code> after all. This leads us to the next point:</p>
+<h2>Create Shallow Hierarchies</h2>
+<p>A class hierarchy can be shallow or deep, and it can be narrow or wide. The ideal hierarchy, from the point of readability and understandability, is of course shallow and narrow: Only a few child classes, and only one level deep.</p>
+<p>The worst hierarchies are deep and wide. They are too complex to understand and often too rigid in their design. Avoid those!</p>
+<p>What's still okay are shallow and wide hierarchies. It just means that your one base class has many useful specializations. It should still be relatively easy to reason about such a hierarchy.</p>
+<p>What's not so okay are deep and narrow hierarchies. According to the author, there's two issues with them. First, over time they grow wider anyway as we add new classes here and there at different levels of the hierarchy. Second, most people only understand the ends of the hierarchy: The classes at the top and the classes at the bottom, with lots of mystery and confusion in the middle.</p>
+<h1>Summary</h1>
+<p>The first thing to check with mixins / modules is whether they <em>actually</em> represent a <em>role</em> that an object might play. The coding techniques to make mixins and modules successful are the same patterns that make classical inheritance successful. And when an object acquires behavior via inheritance, it should honor the contract implied by that relationship.</p>
+
+    </main>
+</body>
+
+</html>

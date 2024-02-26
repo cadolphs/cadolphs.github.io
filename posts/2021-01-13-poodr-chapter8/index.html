@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <header>
+        <h1>Practical Object Oriented Design - Book Notes - Chapter 8</h1>
+    </header>
+    <main>
+        <p>This is the eigth part in my review and reading notes on the Practical Object Oriented Programming book (<a href="http://www.poodr.com">www.poodr.com</a>) by Sandi Metz.</p>
+<p>Composition is the concept of combining parts into something larger, and after inheritance and modules it is the third technique for arranging behavior and code for effective reuse.</p>
+<p>In this chapter, the author first gives as an example a big refactoring of something that was previously using inheritance into something that now uses composition.</p>
+<p>The basic idea is: A complex object may have <em>parts</em>. Being a <em>part</em> is a <em>role</em> and the containing object should be happy to interact and collaborate with any object that implements the appropriate interface!</p>
+<p>I will only very superficially touch on the example. Check it out in the original book.</p>
+<h1>Composing a Bicycle of Parts</h1>
+<ul>
+<li>Flashback to two chapters ago (Inheritance).</li>
+<li>Recall <code>MountainBike</code> and <code>RoadBike</code> being subclasses of <code>Bike</code>.</li>
+<li>What do they <em>differ</em> in? Their spare parts!</li>
+<li>So what if we just have one <em>concrete</em> class, <code>Bike</code> that <em>has</em> parts? Then the <em>parts</em> can be specific to road bikes and mountain bikes: A road bike is a bike with road bike parts, and a mountain bike is a bike with mountain bike parts!</li>
+</ul>
+<h2>Updating the Bicycle Class</h2>
+<ul>
+<li>Here we refactor the Bicycle inheritance hierarchy and replace it with composition.</li>
+<li>Basically this is all just about delegating messages!</li>
+<li>Bicycle needs to respond to <code>spares</code> message and therefore <code>delegates</code> it to its <code>parts</code> object.</li>
+<li>Contrast with inheritance: There, a <code>MountainBike</code> needed to respond to <code>spares</code> message and therefore <em>delegated</em> it to the <code>Biycle</code> superclass.</li>
+<li>Note: <code>Bicycle</code> class now does <em>very little</em> indeed. This is just an example. In larger example it would do <em>other</em> things; we just moved the things related to spare parts into the <code>parts</code> class!</li>
+</ul>
+<p>Main takeaway: Inheritance leads to <em>automatic</em> delegation. Composition requires <em>explicit</em> delegation.</p>
+<h2>Creating a Parts hierarchy</h2>
+<ul>
+<li><code>Bicycle</code> is a concrete class now; no sub-classes!</li>
+<li>Instead, subclass from <code>Parts</code>. <em>There</em> we will have that hierarchy.</li>
+<li>In this example, just copy over relevant code from our previous hierarchy.</li>
+</ul>
+<p>Common pattern: Using composition and inheritance side by side: An object is made up of parts, and those parts are placed in a hierarchy.</p>
+<h1>Composing the Parts object</h1>
+<ul>
+<li>So far, <code>Parts</code> handled as class using inheritance.</li>
+<li>We can refactor to use composition:</li>
+<li>Obviously a <code>Parts</code> object could be composed of many <code>Part</code> objects.</li>
+</ul>
+<h2>Creating the Part object</h2>
+<ul>
+<li>Simple class <code>Part</code> responds to <code>needs_spare</code></li>
+<li>Now <code>Parts</code> is just a simple wrapper around a <code>list</code> of <code>Part</code> objects</li>
+<li>It's debatable then whether a <code>Parts</code> class is necessary or if <code>Bicycle</code> could just hold a <code>list</code> of <code>Part</code> objects directly. It's <em>cleaner</em> conceptually to make a class so interaction and manipulation of the object is &quot;controlled&quot;, and implementation details such as underlying data structure (<code>list</code> versus something else) are encapsulated.</li>
+</ul>
+<h2>Making the Parts Object More Like an Array</h2>
+<ul>
+<li>This part felt very Ruby specific; I think Python with its abstract collections base classes might not have the same issues.</li>
+<li><code>Parts</code> is a wrapper around a sequence of <code>Part</code> objects</li>
+<li>Programmers / Users <em>expect</em> certain behavior and features of a sequence, like being able to iterate over them: <code>for part in parts:</code></li>
+<li>In Python, that means implementing the iterator <em>protocol</em> (e.g. <code>__len__</code> and <code>__getitem__</code>).</li>
+<li>It's your call as the programmer how much work you want to put into making these protocols available.</li>
+</ul>
+<h1>Manufacturing Parts</h1>
+<p>This section does not necessarily have much to do with <em>composition</em> but shows a useful technique in object oriented programming: Somewhere in our code we need to create the objects that play certain roles. If the knowledge needed to create these objects is encapsulated in a class, we call that class a <em>Factory</em>. We can then ask this factory to make us certain objects that play certain roles without having to know the exact class name involved.</p>
+<h1>Deciding Between Inheritance and Composition</h1>
+<p>Both classical inheritance and composition are ways of organizing and arranging code, and they come with their own costs and benefits. When you use inheritance, you get the benefit of <em>automated</em> message delegation, at the cost of placing your objects in a class hierarchy that you need to take care to get right. When you use composition, you have to deal with delegation manually, but the resulting coupling between the objects is much looser. Thus, which of the two techniques is right for your problem depends very much on the context. This section contains a few pointers and thoughts to get this right!</p>
+<ul>
+<li>General rule: When both would work, favor composition.</li>
+<li>If you cannot explicitly defend inheritance, don't use it.</li>
+<li>Inheritance is justified when there are high rewards for low risk.</li>
+</ul>
+<h2>Accepting the Consequences of Inheritance</h2>
+<h3>Benefits</h3>
+<p>In a well-modeled class hierarchy, your code will be reasonable, usable, and exemplary, but not necessarily transparent:</p>
+<ul>
+<li>Reasonable: Big changes in behavior can often be achieved with small changes at the top of the inheritance tree</li>
+<li>Usable: The code in a correct hierarchy can easily be reused by just adding yet another subclass extension to it.</li>
+<li>Exemplary: If the hierarchy is correct, then adding these new subclasses will be easy, and one can readily figure out what one must do by checking the code of existing subclasses.</li>
+</ul>
+<h3>Costs of Inheritance</h3>
+<p>Note that these benefits only come to pass when you use inheritance for a problem that suits it. Otherwise, you experience the flip side of the benefits:</p>
+<ul>
+<li>Because changes at the top of the hierarchy have an outsized effect, the cost of changing things in an incorrectly modeled hierarchy is extremely large!</li>
+<li>An incorrectly modeled hierarchy is hard to re-use because the contract implied in inheriting from the hierarchy might be too restrictive.</li>
+<li>Finally, extending an incorrectly modeled hierarchy will often require ugly hacks that are <em>not</em> exemplary of good code.</li>
+</ul>
+<h3>Python vs Ruby</h3>
+<p>Here is one quote from the book that does not necessarily apply to Python:</p>
+<blockquote>
+<p>Avoid writing frameworks that require users of your code to subclass your objects in order to gain your behavior. Their application’s objects may already be arranged in a hierarchy; inheriting from your framework may not be possible</p>
+</blockquote>
+<p>In Python, we have frameworks such as Django, or PyTorch, that make liberal use of inheritance, and those frameworks seem to be quite reasonable. In Python, we have of course the option to use multiple inheritance, so we can mix the framework hierarchy with our own hierarchy. Still, it is a good idea to first stop and consider whether inheritance is the <em>best</em> way to grant access to our framework's behavior, or whether composition might be better.</p>
+<h2>Accepting the Consequences of Composition</h2>
+<p>As mentioned before, in composition we don't depend on any pre-defined class hierarchy, and therefore the composed objects deal with message delegation manually. The pros and cons are therefore different:</p>
+<h3>Benefits of Composition</h3>
+<p>If done right, composition involves the creation of many small, independent objects with single responsibilities and well-defined public interfaces. Measured against the code qualities, such a system is:</p>
+<ul>
+<li>Transparent. Each class is small and has a single responsibility. The effect of changes to the object are easy to understand.</li>
+<li>Reasonable. Changing the behavior of the whole often means simply plugging in a different object for a given part. An example for this is that we can turn a <code>RoadBike</code> into a <code>MountainBike</code> simply by plugging in a <code>MountainBikeParts</code> object into the <code>Bicycle</code> class rather than a <code>RoadBikeParts</code> object.</li>
+<li>Useable. Because the objects are small and have well-defined interfaces, they are easy to re-use in new contexts.</li>
+</ul>
+<h3>Costs of Composition</h3>
+<p>Because we don't get the automatic message delegation that inheritance brings, a composed object must know explicitly which message to delegate to which other object. This might lead to a lot of repetition in the code. Also, if the composed object and its relation to its components is overly complicated, then even if each component is very small and easy to understand, the whole that they build might be very complex: Changing the behavior of one small component might have only a small effect on that component, but a huge effect on the behavior overall.</p>
+<p>So in this sense, composition is great at explaining how an object is made of parts, but not so good at dealing with lots of parts that are almost the same.</p>
+<h2>Choosing Relationships</h2>
+<p>What follows are some rules and heuristics for picking either of classical inheritance, modules/mixins, and composition to deal with your problem. And of course it does not always have to be a binary either-or decision: You might use composition to model one relationship between an object and its parts, and then use classical inheritance among the parts that are almost identical.</p>
+<h3>Use Inheritance for is-a Relationships</h3>
+<p>If the core of an object's identity is that it <em>is a</em> specialization of a general concept, inheritance might be the right choice. Especially if this modeling results in a shallow, narrow, hierarchy and thus your costs for being wrong are low.</p>
+<p>On the flip side, do <em>not</em> use inheritance just to get your hands at <em>some</em> of the behavior of some existing class. Just because a dog has four legs doesn't meant you should inherit from an existing class <code>Table</code> just to get support for legs...</p>
+<h3>Use Duck-Types for behaves-like-a Relationships</h3>
+<p>When an object plays a role, but is not entirely defined by that role, we have a duck type. Examples include the <code>Schedulable</code> and <code>Preparer</code> duck-types of previous sections. It is common that many otherwise completely unrelated objects end up playing the same role in a given context. Placing these objects into a classical hierarchy would make little sense.</p>
+<p>Instead, identify the interface of the duck type and make sure the players of that duck type implement that interface. This can be done informally (at least in dynamic languages) or formally (e.g. by defining a purely abstract base class) depending on how much structure you need.</p>
+<p>If the duck type shares behavior, and not just the interface, use modules (in Ruby) or mixin classes (in Python).</p>
+<h3>Use Composition for has-a Relationships</h3>
+<p>Sometimes this is obvious: A car has wheels, a bicycle has a chain and other parts etc. The important thing is that a bike is <em>more</em> than its parts.</p>
+<p>There might be cases where this is not as obvious as it could be. Let's go back to an early example. Imagine for a moment that Python's <code>list</code> class did not already have methods for treating it as a stack (first-in-first-out data access) and we wanted to write our own <code>Stack</code> class, with just the two methods of <code>push</code> and <code>pop</code>.</p>
+<p>Someone might be tempted to use inheritance here:</p>
+<pre><code class="language-python">class Stack(list):
+    def pop(self):
+        item = self[-1]
+        del self[-1]
+        return item
+    
+    def push(self, value):
+        self.append(value)
+</code></pre>
+<p>The issue here is that a <code>Stack</code> has some fundamental differences from a <code>list</code>. Most importantly, data access <em>only</em> happens at the top of the stack. But by inheriting the full interface and behavior from <code>list</code>, nothing would stop us from accessing items in the middle:</p>
+<pre><code class="language-python">my_stack = Stack()
+my_stack.push(1)
+my_stack.push(2)
+
+my_stack[0] = 5
+print(my_stack)
+# [5, 2]
+</code></pre>
+<p>We <em>could</em> try and prevent this by overriding the <code>__setitem__</code> and <code>__getitem__</code> methods in <code>Stack</code> to prevent this random access, but think about what that means in terms of the class hierarchy: <code>Stack</code> says &quot;I'm a list!&quot; but then says &quot;Yeah but don't access me like a list!&quot;. In other words, the <code>Stack</code> class is <em>not</em> substitutable for the <code>list</code> class!</p>
+<p>It would be much more accurate to say that a stack <em>has a</em> list (or whatever else we decide to use internally for storage):</p>
+<pre><code class="language-python">class Stack:
+    def __init__(self):
+        self._items = []
+        
+    def pop(self):
+        item = self._items[-1]
+        del self._items[-1]
+        return item
+    
+    def push(self, value):
+        self._items.append(vale)
+</code></pre>
+<p>Now trying to set values via <code>my_stack[0] = 5</code> would give an error. And if we decide that we don't want to use a list to store the items but something else (a linked list, maybe?) we can make this change without changing the interface of <code>Stack</code>.</p>
+<h1>Summary</h1>
+<p>Classical inheritance, modules (or mixins) and composition are all great tools with justifiable use cases. They're all awesome when used in the right context, and they all have the potential to produce hard-to-maintain code when used in the wrong context. The last three chapters have hopefully demonstrated a number of principles that help deciding on which technique to use.</p>
+<p>And if you ever chose the wrong technique, don't hestitate to refactor to something more suitable!</p>
+
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <header>
+        <h1>Practical Object Oriented Design - Book Notes - Chapter 6</h1>
+    </header>
+    <main>
+        <p>This is the sixth part in my review and reading notes on the Practical Object Oriented Programming book (www.poodr.com) by Sandi Metz.</p>
+<p>So, let's talk inheritance. It might seem strange that, in a book about object oriented design, inheritance only shows up this late in the game. Isn't inheritance <em>the</em> OG object oriented feature? Well, let's see!</p>
+<p>Some recap thoughts:</p>
+<ul>
+<li>In a well-designed application, code is easy to reuse, and is also actively being reused to solve different problems.</li>
+<li>If your classes are small, have minimum context, have their dependencies injected into them, and furthermore have clear public interfaces, then they're already super reusable!</li>
+<li>So where does that leve inheritance?</li>
+</ul>
+<p>I appreciate the authors goal: There's a <em>know how</em> to using inheritance, and there's also the (even more important) question of <em>whether</em> to use it at all.</p>
+<h1>Understanding Classical Inheritance</h1>
+<p>Without getting philosophical about inheritance and taxonomies and &quot;is-a&quot; relationships, at its practical core inheritance is about message delegation: If an object receives a message, it either deals with the message itself, or it delegates the message to another object. All inheritance does is say: <em>Any</em> message you don't understand yourself, please delegate to the class you're inheriting from.</p>
+<p>But leaving it at this level is dangerous. There are certainly <em>misuses</em> of inheritance that create unnecessary coupling and rigid structures that make your code hard to maintain and extend!</p>
+<h1>Recognize Where To Use Inheritance</h1>
+<p>So here the author gives a good example where inheritance will be useful; but also discusses <em>how</em> we go about recognizing this in general, and how we then go about <em>introducing</em> inheritance. One main takeaway right away: It's pretty much <em>never</em> a good idea to <em>start</em> with some preconceived idea of what the inheritance structure (the family tree, so to speak) of your classes <em>should</em> look like. Let the concrete objects you have be your guide!</p>
+<h2>Starting with a Concrete Class</h2>
+<p>Here the author just introduces a concrete class that does a concrete thing. A bicycle, in this case, that has some info about its tires and about what sort of spare parts it needs.</p>
+<h2>Embedding Multiple Types</h2>
+<p>In this chapter, we introcuce some extra behavior, some twist, in our concrete class: We want to add something that is <em>almost</em> like the thing we already have. This happens <em>all</em> the time! It is at this point very tempting to just bolt that extra stuff onto the class we already have. (Here it is again, that strong focus on classes that are already there!)</p>
+<p>Often, this sort of bolting-on involves adding a switch to our class. In this case, the <code>Bicycle</code> class gets a field that says whether a particular instance is a road bike or a mountain bike. And then the class's methods involve checking what that type field is set to.</p>
+<p>This is bad! It is just like the antipattern (code smell) from the previous section. Just as we shouldn't switch on an object's class so we shouldn't switch on a class's &quot;type&quot; or &quot;style&quot; variable: It leads to rigid code that's awkward to extend, and it also leads to lots of duplications as our class will be littered with these type checks.</p>
+<p>In more direct terms, adding such a type or style field violates the single responsibility principle, because with that switch we literally state that our class does either one thing or another thing.</p>
+<h2>Finding the Embedded Types</h2>
+<p>Such a type check is really a strong hint that we should be dealing with two different classes. It may very well be the case that these classes share lots of behavior, but they also differ across some aspects, as expressed by that <code>style</code> variable. This is exactly the situation where inheritance <em>can</em> be useful.</p>
+<h2>Choosing inheritance</h2>
+<p>The automated delegation that happens with inheritance means that a subclass is everything the superclass is <em>and then some</em>. The subclass <em>acquires</em> the complete public interface of its superclass. This brings with it certain <em>responsibilities</em>: The superclass's public interface represents a certain contract; certain promises about what the public interface achieves. Your subclass must honor this contract!</p>
+<h2>Misapplying Inheritance</h2>
+<p>Before we see how <em>good</em> inheritance looks like, the author shows us how <em>bad</em> inheritance looks like. The hidden culprit here is, again, an overreliance on existing classes:</p>
+<p>The example had a concrete class <code>Bicycle</code> and then has <code>MountainBike</code> inherit directly from this concrete class. That led to a number of issues, becase the original bicycle class has behavior that <em>doesn't make sense</em> for a mountain bike (things like handlebar tape, apparently). There's a code smell with the name <em>Refused Bequest</em>:</p>
+<blockquote>
+<p>Sub-classes get to inherit the methods and data of their parents. But, what if they don't want or need what they are given? They are given all these great gifts and pick just a few to play with.
+-- Martin Fowler, Refactoring: Improving the Design of Existing Code</p>
+</blockquote>
+<p>Inheritance is all-or-nothing. By adding methods to your class's public interface, you <em>promise</em> that your class will <em>behave as expected</em> when someone calls these methods!</p>
+<p>As we will see below, writing classes that are &quot;open for extension&quot; (via inheritance) requires special care and techniques to reduce the risk of ending up with a strongly coupled mess.</p>
+<h2>Finding the Abstraction</h2>
+<p>Given that subclasses are <em>specializations</em> of their superclasses, any object that expects to be working with an instance of the superclass should be able to work instead with an instance of the subclass <em>without knowing that it is dealing with a subclass</em>. This is the Liskov substitution principle, named after Barbara Liskov.</p>
+<h3>The Two Main Rules of Inheritance</h3>
+<p>Inheritance can only work if these two things are true:</p>
+<ul>
+<li>If <code>Child</code> inherits from <code>Parent</code>, then <code>Child</code> <em>really</em> must be a <em>specialization</em> of <code>Parent</code>.</li>
+<li>You must use the correct coding techqniues. More on that later.</li>
+</ul>
+<p>In terms of specializations, here is a quick example of this principle gone wrong: If you see your inheritance tree as a sort of taxonomy where the child classes have an &quot;is-a&quot; relationship with the parent classes, you risk violating the &quot;specialization&quot; principle. For example, a <code>Square</code> <em>is a</em> <code>Rectangle</code> but code that expects a <code>Rectangle</code> to work with might <em>not</em> work with a <code>Square</code>, because a square is a <em>restricted</em> rather than an <em>extended</em> version of a rectangle.</p>
+<h2>Creating an Abstract Superclass</h2>
+<p>So far we discussed why it is dangerous to just directly inherit from a concrete class. It is better to first find what the two concrete classes would have in common and extract that into a superclass. This class may very well be <em>abstract</em>. Such abstract classes <em>exist</em> to be subclassed.</p>
+<p>Also, if you remember the discussion from chapter 3, it is always better if classes that have many dependencies are more on the abstract side, as abstract qualities are less likely to change than concrete qualities.</p>
+<p>One note for those of us who are over-eager: Resist the temptation to <em>start</em> your coding with a big class hierarchy design up front. You almost never get it right. And in particular, don't create an abstract class if there would currently be only one concrete subclass. That would be premature, because you haven't yet seen on which dimension the other concrete classes would differ, and on which dimensions they would share behavior! It is much better to wait until more information arrives.</p>
+<p>And the author says that even with <em>two</em> examples of concrete classes that <em>could</em> quite reasonably put some shared behavior into a common superclass, it might be premature to do so! Often best to wait for <em>three</em> examples. I've heard a similar &quot;three strikes&quot; rule for other occasions where you would want to remove duplication. There's a tension here between improving the design <em>right now</em> but risking getting it wrong versus living with a worse design <em>for now</em> but then having a better design once more information arrives. Check out the relevant chapter!</p>
+<h2>Promoting Abstract Behavior</h2>
+<p>Okay, so now for the sake of example we <em>do</em> create an abstract class for <code>Bicycle</code> with the idea that <code>RoadBike</code> and <code>MountainBike</code> will be subclcasses. We could go about this <em>refactoring</em> in two ways:</p>
+<ol>
+<li>We could add an empty class <code>RoadBike</code> that inherits from <code>Bicycle</code>. Then we <em>push down</em> the concrete stuff from <code>Bicycle</code> into <code>RoadBike</code> and leave only the abstract stuff behind.</li>
+<li>Or we could rename <code>Bicycle</code> to <code>RoadBike</code> and add an empty abstract class <code>Bicycle</code> from which <code>RoadBike</code> inherits. Then we <em>push up</em> all the general abstract stuff from the concrete class to the abstract class.</li>
+</ol>
+<p>Both sound innocent enough, but the author beautifully explains why one way leads to disaster! It boils down to the question &quot;Well, what if you're wrong?&quot;. If you pick option 2 and <em>push up</em> the abstract code, you might <em>miss</em> some of the abstract code. If some abstract behavior is missing in the base class, it will need to be <em>duplicated</em> in all the subclasses, and this duplication will be easy to spot and remedy.</p>
+<p>If, on the other hand, you pick option 1 and <em>push down</em> the concrete code, and you miss some of the concrete stuff, then your supposedly general, abstract, class is now <em>polluted</em> with concrete behavior. Other subclasses might start to depend on it, or they might have to &quot;deal&quot; with it much in the way that <code>MountainBike</code>, in the &quot;bad&quot; version, had to deal with concrete road bike behavior that it didn't need or want!</p>
+<h2>Separating Abstract from Concrete</h2>
+<p>Just a quick note here: Sometimes you can directly push a method up in the hierarchy,
+but as the author explains with an example, sometimes you first have to pry apart the abstract and the concrete. Another argument for keeping your methods short and single-purpose! The top-level methods might be more on the abstract side and the lower-level methods called by them might be more on the concrete side. That allows for easy promotion up the class hierarchy. If you had just smashed everything into a single method, you might miss this opportunity!</p>
+<h2>Using the Template Method Pattern</h2>
+<p>Another benefit of using small methods with single purpose is that your subclasses can override them, with great precision, to provide specialized behavior.</p>
+<h1>Managing Coupling Between Superclasses and Subclasses</h1>
+<p>Now it gets interesting and this often gets overlooked when using inheritance!</p>
+<ul>
+<li>Inheritance introduces coupling!</li>
+<li>This coupling must be carefully managed, just like any other coupling!</li>
+<li>Ideally this coupling will not be overly tight!</li>
+</ul>
+<h2>Understanding Coupling</h2>
+<p>Here's a special coupling that is unique to inheritance: If you've used inheritance, you have certainly come across this situation: A subclass overrides a method of the superclass but still relies on the superclass's implementation of that method, and it gets there via a call to
+<code>super</code>. Here is an example:</p>
+<pre><code class="language-python">class Superclass:
+	def __init__(self, *init_args):
+		self.do_superclass_init_stuff(*init_args)
+
+class Subclass(Superclass):
+	def __init__(self, *init_args):
+		self.do_some_special_subclass_init_stuff(*init_args)
+		super().__init__()
+</code></pre>
+<p>Looks innocent enough, but it might also show up in more complicated methods! The problem here is that we introduce a certain coupling: We need to know <em>when</em> and <em>how</em> and <em>if</em> to call the various methods of <code>super</code> in order to provide our specializations! Our subclass, when sending messages to <code>super</code>, basically says: &quot;I know the <em>algorithm</em>&quot;. But that knowledge belongs in the superclass!</p>
+<h2>Decoupling Subclasses Using Hook Methods</h2>
+<p>If the superclass controls the algorithm, it must allow the subclasses to provide specialized behavior in certain predefined places. This is achieved via hook methods. In the example above, we would rewrite it like so:</p>
+<pre><code class="language-python">class Superclass:
+	def __init__(self, *init_args):
+		self.do_superclass_init_stuff(*init_args)
+		self.post_init(*init_args)
+
+	def post_init(self, *init_args):
+		pass
+	
+class Subclass(Superclass):
+	def post_init(self, *init_args):
+		self.do_some_special_subclass_init_stuff(*init_args)
+</code></pre>
+<p>Here, <code>post_init</code> is a <em>hook method</em>. The superclass decides when in the init process it gets called, and it provides a default implementation that does nothing. The subclass overrides it to provide its specialization.</p>
+<p>This approach is also called the <em>template method pattern</em>. The superclass's
+responsibility is to know the abstract concept of what needs to happen, i.e.,
+what methods need to be called. The subclasses are responsible for filling in
+the blanks, without having to know exactly where in the algorithm these blanks
+are.</p>
+<h1>Summary</h1>
+<p>Main takeaways: Inheritance works best if there is some <em>stable abstraction</em>
+where you have at least <em>three</em> concrete examples (to really nail down what the
+common abstraction should be). Using the template method pattern and hook
+methods means that your subclasses can fully focus on providing their
+specializations without having to know the abstract algorithm of your
+superclass.</p>
+
+    </main>
+</body>
+
+</html>
