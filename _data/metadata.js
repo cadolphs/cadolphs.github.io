@@ -1,8 +1,8 @@
 module.exports = {
-	title: "Clemens Adolpjs",
+	title: "Clemens Adolphs",
 	url: "https://cadolphs.github.io",
 	language: "en",
-	description: "I am writing about my experiences as a naval navel-gazer.",
+	description: "Writing about software engineering",
 	author: {
 		name: "Clemens Adolphs",
 		email: "clemens.adolphs@gmail.com",
