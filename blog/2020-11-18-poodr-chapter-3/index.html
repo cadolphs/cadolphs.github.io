@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Practical Object Oriented Design - Book Notes - Chapter 3</title>
+		<meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
+		<link rel="alternate" href="/eleventy-base-blog/feed/feed.xml" type="application/atom+xml" title="Clemens Adolpjs">
+		<link rel="alternate" href="/eleventy-base-blog/feed/feed.json" type="application/json" title="Clemens Adolpjs">
+		
+		<style>/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+}
+
+/* Theme colors */
+:root {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #333;
+
+	--background-color: #fff;
+
+	--text-color: var(--color-gray-90);
+	--text-color-link: #082840;
+	--text-color-link-active: #5f2b48;
+	--text-color-link-visited: #17050F;
+
+	--syntax-tab-size: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--color-gray-20: #e0e0e0;
+		--color-gray-50: #C0C0C0;
+		--color-gray-90: #dad8d8;
+
+		/* --text-color is assigned to --color-gray-_ above */
+		--text-color-link: #1493fb;
+		--text-color-link-active: #6969f7;
+		--text-color-link-visited: #a6a6f8;
+
+		--background-color: #15202b;
+	}
+}
+
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	overflow-y: scroll;
+}
+body {
+	max-width: 40em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem;
+}
+main :first-child {
+	margin-top: 0;
+}
+
+header {
+	border-bottom: 1px dashed var(--color-gray-20);
+}
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.links-nextprev {
+	list-style: none;
+	border-top: 1px dashed var(--color-gray-20);
+	padding: 1em 0;
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em;
+}
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5rem;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	counter-increment: start-from -1;
+	margin-bottom: 1em;
+}
+.postlist-item:before {
+	display: inline-block;
+	pointer-events: none;
+	content: "" counter(start-from, decimal-leading-zero) ". ";
+	line-height: 100%;
+	text-align: right;
+	margin-left: -1.5rem;
+}
+.postlist-date,
+.postlist-item:before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	padding-left: .25em;
+	padding-right: .5em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: #aaa;
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}</style>
+	</head>
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+
+		<header>
+			<a href="/eleventy-base-blog/" class="home-link">Clemens Adolpjs</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/eleventy-base-blog/">Home</a></li>
+					<li class="nav-item"><a href="/eleventy-base-blog/blog/">Archive</a></li>
+					<li class="nav-item"><a href="/eleventy-base-blog/about/">About Me</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main id="skip">
+			
+<h1>Practical Object Oriented Design - Book Notes - Chapter 3</h1>
+
+<ul class="post-metadata">
+	<li><time datetime="2020-11-18">18 November 2020</time></li>
+</ul>
+
+<p>This is the third post in my book review / book notes series about &quot;Practical Object Oriented Design&quot; by Sandi Metz. (https://www.poodr.com/)</p>
+<p>The previous chapter was focused on a single class, and how each class should have one single responsibility. If you design your classes in this way, then obviously any complex behavior must be the result of classes <em>collaborating</em>. This need for collaboration introduces <em>dependencies</em> between the classes, and the job of good design is to manage these dependencies in the best possible way.</p>
+<p>Basically, if you ask a class to do something, there's three ways this can happen:</p>
+<ol>
+<li>The expected behavior is implemented by the class itself. (See last chapter)</li>
+<li>The class <em>inherits</em> the behavior from another class. (Discussed in a subsequent chapter)</li>
+<li>The class <em>delegates</em> the behavior to another class. This is what we talk about in this chapter</li>
+</ol>
+<h1 id="understanding-dependencies" tabindex="-1">Understanding Dependencies <a class="header-anchor" href="#understanding-dependencies">#</a></h1>
+<p>As mentioned, collaboration introduces dependencies. We say that A depends on B if A might have to change when B changes. Consider this abstract example:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">A</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">do_your_job</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		job_helper <span class="token operator">=</span> B<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		some_intermediate_result <span class="token operator">=</span> job_helper<span class="token punctuation">.</span>process<span class="token punctuation">(</span>arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span>
+		<span class="token keyword">return</span> self<span class="token punctuation">.</span>more_processing<span class="token punctuation">(</span>some_intermediate_result<span class="token punctuation">)</span></code></pre>
+<p>Let us list all the ways in which class A depends on class B. Class A <strong>knows</strong></p>
+<ul>
+<li>The name of the class B, and how to create a new instance of it.</li>
+<li>The name of the method it needs to call (i.e. the name of the message to send to class B).</li>
+<li>The arguments required by that message.</li>
+<li>The order of those arguments.</li>
+</ul>
+<p>Some of these dependencies are inevitable. But many are not! And you'd be surprised!</p>
+<p>Good Design: Manage dependencies so that each class has fewest possible. <em>Just</em> enough to do its job and nothing more.</p>
+<h2 id="coupling-between-objects-cbo" tabindex="-1">Coupling Between Objects (CBO) <a class="header-anchor" href="#coupling-between-objects-cbo">#</a></h2>
+<p>A dependency between classes A and B <em>couples</em> them to each other. The more tightly coupled, the more it's basically one entity. That limits reuse, and makes change harder, because now it's spread over more than just one class. In the example above, we cannot reuse <code>A</code> without also bringing <code>B</code> along for the ride.</p>
+<p>Sometimes, this is not a big deal. For example, a given class might bring along with it a number of custom-defined exception classes, like <code>CouldNotDoMyJobException</code>.</p>
+<p>More often than not though, strong coupling is <em>not</em> inevitable. Below we will see some examples and techniques for addressing this.</p>
+<h2 id="other-dependencies" tabindex="-1">Other Dependencies <a class="header-anchor" href="#other-dependencies">#</a></h2>
+<p>A quick aside that other chapters will deal with certain other types of dependencies. Just a quick overview:</p>
+<ul>
+<li>Law of Demeter: Imagine if one object knows another who knows another who knows something. This dependency on a complete <em>chain</em> of objects knowing each other is fragile and best avoided.</li>
+<li>Test-to-code coupling! Another type of dependency. Learn about writing good, cost-effective tests that aren't fragile! (Chapter 9)</li>
+</ul>
+<h1 id="writing-loosely-coupled-code" tabindex="-1">Writing Loosely Coupled Code <a class="header-anchor" href="#writing-loosely-coupled-code">#</a></h1>
+<p>Back to the four original examples of couplings.</p>
+<p>The author describes dependencies as <em>little dots of glue</em> where the various classes neatly fit together. But if you have too much glue, everything devolves into one big lumpy mess.</p>
+<p>We'll look now into specific techniques that address the four dependencies we mentioned above.</p>
+<h2 id="inject-dependencies" tabindex="-1">Inject Dependencies <a class="header-anchor" href="#inject-dependencies">#</a></h2>
+<p>So in our toy exmaple, class A knows the name of class B. That is a dependency. If we change the name of class B, we have to update it in class A.</p>
+<p>Now what's the big deal with that? There's simple search-and-replace functionality, and there's modern IDEs with refactoring support. So really the mere name itself isn't the problem here.</p>
+<p>The real problem is that we are hard-coding the creation of instances of class B. Class A has some responsibility (<code>do_your_job</code>) that it cannot completely fulfill on its own. It needs to collaborate with another class, and in the current code version, it decides to <em>only</em> collaborate with instances of class B. The author calls this an <em>unjustified attachment to type</em>. Ultimately, we don't care about the name of the class, or even its exact type. We care about sending it the <code>process(arg1, arg2)</code> message!</p>
+<p>The simplest way to deal with this problem has the fancy name of <em>dependency injection</em>:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">A</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> job_helper<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		self<span class="token punctuation">.</span>job_helper <span class="token operator">=</span> job_helper
+		
+	<span class="token keyword">def</span> <span class="token function">do_your_job</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		some_intermediate_result <span class="token operator">=</span> self<span class="token punctuation">.</span>job_helper<span class="token punctuation">.</span>process<span class="token punctuation">(</span>arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span>
+		<span class="token keyword">return</span> self<span class="token punctuation">.</span>more_processing<span class="token punctuation">(</span>some_intermediate_result<span class="token punctuation">)</span></code></pre>
+<p>Here we decide that it's not the job of class A to know how to <em>make</em> a <code>job_helper</code>. It needs one to collaborate with, so we pass it in. The example above <em>injects</em> the <code>job_helper</code> dependency in the class's <code>__init__</code>, but we could also consider passing it in at the method level, as in <code>do_your_job(self, arg1, arg2, job_helper)</code>.</p>
+<p>Of course <em>somewhere</em> in our program we will have to create an instance of a class that responds to the <code>process</code> message, which might very well be an instance of class B. But we have decided that knowing what class to instantiate, and how, is not the job of class A.</p>
+<p>Writing your code this way also makes it easier to write unit tests for your code! In the previous version, testing class A without also testing class B would be a bit tricky. At least in Python we can use &quot;monkey patching&quot; to mock out class B. But it is much cleaner and easier if we can just pass in either a mock or a dummy version of a <code>job_helper</code> directly. More on testing will come in a later chapter.</p>
+<p>Maybe at this point I will mention one additional technique, or pattern: Sometimes it is not enough to inject an instance of a class to collaborate with. Imagine our class A needed to be able to create new instances of the <code>job_helper</code>. How can it possibly do that without knowing the name of the class it needs to create? The answer is: Through a <em>factory</em>. Instead of passing in a <code>job_helper</code> into the <code>__init__</code>, we would pass in a <code>job_helper_factory</code>. Then, whenever class A would need to get its hands on a new instance of a job helper, it could call something like <code>job_helper_factory.make_new_job_helper()</code>. The knowledge of what concrete class to instantiate is completely contained within that factory class.</p>
+<p>To recap: Realize that creating instances of a class can be seen as a <em>responsibility</em> that may or may not belong into your class. If it doesn't, use dependency injection to provide your class with its dependencies.</p>
+<h2 id="isolate-dependencies" tabindex="-1">Isolate Dependencies <a class="header-anchor" href="#isolate-dependencies">#</a></h2>
+<p>Here the author briefly addresses what you could do if you don't have full control over the codebase <em>or</em> just not enough time to complete get rid of all the unnecessary dependencies right now.</p>
+<p>If that's the case, you should at least <em>isolate</em> them:</p>
+<h3 id="isolate-instance-creation" tabindex="-1">Isolate Instance Creation <a class="header-anchor" href="#isolate-instance-creation">#</a></h3>
+<p>In our <code>class A</code> example above, let's say we cannot move creation of class <code>B</code> to some outside part. Then at lest we should <em>isolate</em> this creation, maybe like so:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">A</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">get_new_job_helper</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span> B<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+	<span class="token keyword">def</span> <span class="token function">do_your_job</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		job_helper <span class="token operator">=</span> self<span class="token punctuation">.</span>get_new_job_helper<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		some_intermediate_result <span class="token operator">=</span> job_helper<span class="token punctuation">.</span>process<span class="token punctuation">(</span>arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span>
+		<span class="token keyword">return</span> self<span class="token punctuation">.</span>more_processing<span class="token punctuation">(</span>some_intermediate_result<span class="token punctuation">)</span></code></pre>
+<p>Assuming that in a more complex example, creations of <code>B</code> might be sprinkled all throughout class A's methods, moving that creation to exactly one method isolates this dependency and makes it explicit: Reading the code of class A, we immediately see that it explicitly depends on class B. The dependency is not hidden deep in the belly of some method. This helps us maintain the code, and also is a great reminder to us to consider refactoring the code further, to get rid of that dependency.</p>
+<h3 id="isolate-vulnerable-external-messages" tabindex="-1">Isolate Vulnerable External Messages <a class="header-anchor" href="#isolate-vulnerable-external-messages">#</a></h3>
+<p>Imagine in our simple example that <code>job_helper.process</code> was called in a lot of places, or called deep inside an internal method. <em>If</em>, in the current phase of our design and coding process, we reasonably expect that this <code>process</code> message might change, it is a good idea to <em>isolate</em> this message in a separate method:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">A</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">get_new_job_helper</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span> B<span class="token punctuation">(</span><span class="token punctuation">)</span>
+	
+	<span class="token keyword">def</span> <span class="token function">process</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span> self<span class="token punctuation">.</span>get_new_job_helper<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>process<span class="token punctuation">(</span>arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span>
+	
+	<span class="token keyword">def</span> <span class="token function">do_your_job</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		some_intermediate_result <span class="token operator">=</span> self<span class="token punctuation">.</span>process<span class="token punctuation">(</span>arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span>
+		<span class="token keyword">return</span> self<span class="token punctuation">.</span>more_processing<span class="token punctuation">(</span>some_intermediate_result<span class="token punctuation">)</span></code></pre>
+<p>If that whole job-helper and process code happened in multiple places of our code, extracting it into its own method is a good idea anyway, due to the &quot;Don't Repeat Yourself&quot; principle. But even if it only happens in exactly one place, it might still be a good idea to extract it, to move the interesting bits out from the depths of an internal method, so that the dependency becomes explicit and obvious.</p>
+<h2 id="remove-argument-order-dependencies" tabindex="-1">Remove Argument-Order Dependencies <a class="header-anchor" href="#remove-argument-order-dependencies">#</a></h2>
+<p>Briefly, knowing in which <em>order</em> to pass in arguments is <em>also</em> a dependency, and one that can make it hard to later change a method's signature by adding new arguments. Especially early on in design, your methods' signatures will probably change a lot, so it makes sense to try and not depend on this order.</p>
+<p>Luckily, this is very eason in Python by using keyword arguments. You don't even have to change how to define the method itself, just how you call it.</p>
+<p>When using keyword arguments, you trade one dependency on another: Instead of depending on the order of arguments, you now depend on the <em>names</em> of the arguments. So we don't really reduce the number of dependencies when using keyword arguments. Is it still worth it? Yes! Not all dependencies are equal. Some are better than others. Argument <em>names</em> are more <em>stable</em> and more <em>explicit</em> than argument order. If you have to depend on <em>something</em>, try to depend on something that's less likely to change and try to depend on it in a way that's explicit.</p>
+<h3 id="kwargs-in-python" tabindex="-1">kwargs in Python <a class="header-anchor" href="#kwargs-in-python">#</a></h3>
+<p>One extra thought, a short excursion, at this point: Python allows a method to accept <em>any</em> keyword argument via the <code>**kwargs</code> syntax: <code>def function(an_argument, **kwargs)</code> will store any keyword arguments
+passed when calling <code>function</code> in the dictionary <code>kwargs</code>.</p>
+<p>I admit that I am <em>not</em> a big fan of this, because it <em>obscures</em> what arguments we are expecting. A caller would have to read the docstring (which might be out of date!) or, worse, dive into the body of the function to discern which keyword arguments there are.</p>
+<p>Often you see this construct when one function takes a few keywords out of the dict (via <code>pop</code>) and then passes the rest along to another function it calls. Almost always when I see this, there is a violation of the Single Responsibility Principle, or a mis-managed dependency. I believe that in the majority of cases, a better design can eliminate the need for using the catch-all <code>**kwargs</code>.</p>
+<p>One common use-case (and anti-pattern, really) for kwargs occurs in mismatched class hierarchies. We talk about inheritance later, but assuming that you are familiar with the basic concept, you sometimes see a class hierarchy where the various child classes, inheriting from the same base class, want slightly different signatures for their methods:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">Base</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">some_function</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> arg<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">pass</span>
+
+<span class="token keyword">class</span> <span class="token class-name">ChildA</span><span class="token punctuation">(</span>Base<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">some_function</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> arg<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+		
+<span class="token keyword">class</span> <span class="token class-name">ChildB</span><span class="token punctuation">(</span>Base<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">some_function</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> arg<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+		</code></pre>
+<p>The justification here for using <code>kwargs</code> is that, at least syntactically, you can call <code>some_function</code> for each of these three classes with the same arguments. The problem is that, if you really require different signatures for the various classes, they shouldn't be related via inheritance in the first place! The whole idea behind inheritance and polymorphism is that someone sending the <code>some_function</code> method does not, and <em>should not</em>, need to know whether the recipient is <code>Base</code>, <code>ChildA</code>, or <code>ChildB</code>. Code like the one above <em>begs</em> for the anti-pattern of the type switch:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">if</span> <span class="token builtin">isinstance</span><span class="token punctuation">(</span>someclass<span class="token punctuation">,</span> ChildA<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	someclass<span class="token punctuation">.</span>some_function<span class="token punctuation">(</span>arg<span class="token punctuation">,</span> special_argument_for_child_a<span class="token operator">=</span><span class="token string">"foo"</span><span class="token punctuation">)</span>
+<span class="token keyword">elif</span> <span class="token builtin">isinstance</span><span class="token punctuation">(</span>someclass<span class="token punctuation">,</span> ChildB<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	someclass<span class="token punctuation">.</span>some_function<span class="token punctuation">(</span>arg<span class="token punctuation">,</span> special_argument_for_child_b<span class="token operator">=</span><span class="token number">42</span><span class="token punctuation">)</span></code></pre>
+<p>Seriously reconsider your design at this point. Evaluate whether inheritance is what you want, and explore how you could rearrange the code such that the signatures of inherited methods remain the same.</p>
+<h1 id="managing-dependency-direction" tabindex="-1">Managing Dependency Direction <a class="header-anchor" href="#managing-dependency-direction">#</a></h1>
+<p>In a lot of cases, and certainly in the example above, the dependency has a specific direction: Class A had a dependency on class B, but class B did <em>not</em> have a dependency on class A. It is however often possible to rearrange your code and your general logic in such a way that, instead, B would depend on A.</p>
+<p>Let's recall the old version of the toy example a bit:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">A</span><span class="token punctuation">:</span>
+  <span class="token keyword">def</span> <span class="token function">do_your_job</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	job_helper <span class="token operator">=</span> B<span class="token punctuation">(</span><span class="token punctuation">)</span>
+	some_intermediate_result <span class="token operator">=</span> job_helper<span class="token punctuation">.</span>process<span class="token punctuation">(</span>arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span>
+	<span class="token keyword">return</span> self<span class="token punctuation">.</span>more_processing<span class="token punctuation">(</span>some_intermediate_result<span class="token punctuation">)</span>
+
+<span class="token keyword">class</span> <span class="token class-name">B</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">process</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span> self<span class="token punctuation">.</span>_some_internal_calculations<span class="token punctuation">(</span>arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span></code></pre>
+<p>If we decide to remove the responsibility of &quot;doing the job&quot; from class A to class B, we could have a result like this:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">A</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">help_with_job</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> intermediate_result<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		<span class="token keyword">return</span> self<span class="token punctuation">.</span>more_processing<span class="token punctuation">(</span>intermediate_result<span class="token punctuation">)</span>
+
+<span class="token keyword">class</span> <span class="token class-name">B</span><span class="token punctuation">:</span>
+	<span class="token keyword">def</span> <span class="token function">do_your_job</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span><span class="token punctuation">:</span>
+		some_intermediate_result <span class="token operator">=</span> self<span class="token punctuation">.</span>process<span class="token punctuation">(</span>arg1<span class="token punctuation">,</span> arg2<span class="token punctuation">)</span>
+		helper <span class="token operator">=</span> A<span class="token punctuation">(</span><span class="token punctuation">)</span>
+		<span class="token keyword">return</span> A<span class="token punctuation">.</span>help_with_job<span class="token punctuation">(</span>some_intermediate_result<span class="token punctuation">)</span></code></pre>
+<p>In this example, class B has a dependency on class A, and A does not depend on B anymore.</p>
+<p>Note that now of course we'd look into whether or not we should <em>inject</em> the instance of class A instead of creating it right here inside of class B, but that is not the focus of this section.</p>
+<p>Rather, the <em>ability</em> to change the direction of dependencies raises the question: Which direction is the right one? Does it matter?</p>
+<h3 id="choosing-dependency-direction" tabindex="-1">Choosing Dependency Direction <a class="header-anchor" href="#choosing-dependency-direction">#</a></h3>
+<p>The author says it best: You should depend on things that change less often than you do!</p>
+<p>This sounds simple, but it can have a profound impact on how you think about your code.</p>
+<p>Here, the author lists &quot;three simple truths about code&quot;</p>
+<ul>
+<li>Some classes more likely to change than others</li>
+<li>Concrete classes are more likely to change than abstract ones</li>
+<li>Changing a class that has many dependents will result in widespread consequences</li>
+</ul>
+<p>The first point should be self-evident. The classes at the edge of our current development will change a lot. Classes at the core of a standard library will change rarely. In between is a wide spectrum. The well-understood core of our own application might be relatively stable but still change more often than the standard library.</p>
+<p>The second point might be more subtle. An abstract class is one that either only defines an interface without implementing it, or a class that fulfills a more abstract responsibility. Maybe it is a class that, concretely, facilitates messages between other, more concrete classes.</p>
+<p>The third point should be clear as well: All else being equal, changing a class on which a lot of other classes depends will always be messier than changing a class on which few other classes depend.</p>
+<h3 id="recognizing-concretions-and-abstractions" tabindex="-1">Recognizing Concretions and Abstractions <a class="header-anchor" href="#recognizing-concretions-and-abstractions">#</a></h3>
+<p>In this section we get a nice discussion of &quot;concrete&quot; versus &quot;abstract&quot;. We have already used this concept: When we used dependency injection in our very first example in this chapter, we removed the dependency on something <em>concrete</em> (class B and how to create it) to something
+more <em>abstract</em>: The idea that there's certain objects, whatever they are and wherever they come from, that you can send the <code>process</code> message.</p>
+<p>In languages with strict typing (Java, C++/C#), we would have to explicitly define an
+<em>interface</em>: An abstract class that expresses the abstract concept of understanding the <code>process</code> message:</p>
+<pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">IJobHelper</span> <span class="token punctuation">{</span>
+	<span class="token keyword">public</span> <span class="token class-name">SomeReturnType</span> <span class="token function">process</span><span class="token punctuation">(</span><span class="token class-name">SomeType</span> arg1<span class="token punctuation">,</span> <span class="token class-name">SomeOtherType</span> arg2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>and then make it clear that our class A now expects a <code>job_helper</code> passed into its constructor, with the type <code>IJobHelper</code>.</p>
+<p>In Python (and other dynamically typed languages such as Ruby) we do not have to explicitly declare an interface. Any object that happens to respond to the <code>process</code> message can be used. This is also called <em>Duck typing</em>, after the phrase &quot;If it walks like a duck and quacks like a duck, it's a duck!&quot;</p>
+<p>Either way, depending on abstractions is more <em>stable</em> than depending on concretions, simply because a concretion is an &quot;abstraction with the details filled in&quot;.</p>
+<ul>
+<li>E.g. depending on &quot;I'm being passed an object that understand this method&quot; is more abstract than creating concrete instance and sending arguments in concrete order...</li>
+<li>This is where interfaces come in, either explicit (strictly-typed languages) or implicit (Duck-typing)</li>
+</ul>
+<h3 id="avoiding-dependent-laden-classes" tabindex="-1">Avoiding Dependent-Laden Classes <a class="header-anchor" href="#avoiding-dependent-laden-classes">#</a></h3>
+<p>Here, the author adds an important subtle point to the way we should think about classes with many dependents: It's obvious that, if you change a dependent-laden class, you'll get lots of ripple effects that might require related changes.
+But what that means, in practice, is that even <em>having</em> a dependent-laden class in the first place is bad, because you will be <em>very</em> reluctant to touch it.</p>
+<h3 id="finding-the-dependencies-that-matter" tabindex="-1">Finding the Dependencies that Matter <a class="header-anchor" href="#finding-the-dependencies-that-matter">#</a></h3>
+<p>This is a really cool section that drives home all the points made above.</p>
+<p>Consider all your code, all your classes, and put them in a scatter plot. The x-axis
+represents how many dependents it has. The y-axis represents how likely it is to change.
+That leaves us with four quadrants that we can discuss here:</p>
+<p><strong>The Abstract Zone:</strong>
+This zone represents classes that rarely change but that have <em>lots</em> of dependents.
+Typically this zone includes abstract classes and interfaces (either the explicit ones in languages that need them, or the ones implicitly defined via duck typing).</p>
+<p>This is a <em>good</em> zone: If we accept that classes <em>need</em> to depend on other classes to get anything done, then we want these dependencies to cluster around classes that, at least, rarely change, which <em>probably</em> means that these classes are more on the abstract side.</p>
+<p><strong>The Concrete Zone:</strong>
+Not called that way in the book, but I like the name as it contrasts with the Abstract Zone. This quadrant has those classes that are quite likely to change but that have few or no dependents. This is also a <em>good</em> zone: Through our thoughtful design, we have reduced the impact of the likely changes. How did we get rid of the dependents of the concrete classes? By extracting the abstract ideas behind the concrete classes and movign the dependents over to those abstractions!</p>
+<p><strong>The Neutral Zone:</strong>
+Classes that are neither likely to change nor cause a lot of trouble if they were to change. Certainly nice to have, but there always has to be a certain amount of change and of dependency in our application, so the interesting stuff happens in the previous two zones.</p>
+<p><strong>The Danger Zone:</strong>
+Finally, we have the quadrant of classes that are likely to change <em>and</em> that have many dependents. This is the place where coding horror and spaghetti code live: Frequent changes that break lots of things make programming a nightmare. Be aware when you run into a class like this and consider if you can tackle it via reversing the direction of dependency, or extracting an abstract interface.</p>
+<h1 id="summary" tabindex="-1">Summary <a class="header-anchor" href="#summary">#</a></h1>
+<p>Not much to add to what the author already summarises so I won't plagiarize his excellent summary :)</p>
+
+<ul class="links-nextprev"><li>Previous: <a href="/eleventy-base-blog/blog/2020-10-30-poodr-chapter-2/">Practical Object Oriented Design - Book Notes - Chapter 2</a></li><li>Next: <a href="/eleventy-base-blog/blog/2020-11-24-poodr-chapter4/">Practical Object Oriented Design - Book Notes - Chapter 4</a></li>
+</ul>
+
+		</main>
+
+		<footer></footer>
+
+		<!-- This page `/eleventy-base-blog/blog/2020-11-18-poodr-chapter-3/` was built on 2024-04-05T21:40:08.510Z -->
+	</body>
+</html>

@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Practical Object Oriented Design - Book Notes - Chapter 1</title>
+		<meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
+		<link rel="alternate" href="/eleventy-base-blog/feed/feed.xml" type="application/atom+xml" title="Clemens Adolpjs">
+		<link rel="alternate" href="/eleventy-base-blog/feed/feed.json" type="application/json" title="Clemens Adolpjs">
+		
+		<style>/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+}
+
+/* Theme colors */
+:root {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #333;
+
+	--background-color: #fff;
+
+	--text-color: var(--color-gray-90);
+	--text-color-link: #082840;
+	--text-color-link-active: #5f2b48;
+	--text-color-link-visited: #17050F;
+
+	--syntax-tab-size: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--color-gray-20: #e0e0e0;
+		--color-gray-50: #C0C0C0;
+		--color-gray-90: #dad8d8;
+
+		/* --text-color is assigned to --color-gray-_ above */
+		--text-color-link: #1493fb;
+		--text-color-link-active: #6969f7;
+		--text-color-link-visited: #a6a6f8;
+
+		--background-color: #15202b;
+	}
+}
+
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	overflow-y: scroll;
+}
+body {
+	max-width: 40em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem;
+}
+main :first-child {
+	margin-top: 0;
+}
+
+header {
+	border-bottom: 1px dashed var(--color-gray-20);
+}
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.links-nextprev {
+	list-style: none;
+	border-top: 1px dashed var(--color-gray-20);
+	padding: 1em 0;
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em;
+}
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5rem;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	counter-increment: start-from -1;
+	margin-bottom: 1em;
+}
+.postlist-item:before {
+	display: inline-block;
+	pointer-events: none;
+	content: "" counter(start-from, decimal-leading-zero) ". ";
+	line-height: 100%;
+	text-align: right;
+	margin-left: -1.5rem;
+}
+.postlist-date,
+.postlist-item:before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	padding-left: .25em;
+	padding-right: .5em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: #aaa;
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}</style>
+	</head>
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+
+		<header>
+			<a href="/eleventy-base-blog/" class="home-link">Clemens Adolpjs</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/eleventy-base-blog/">Home</a></li>
+					<li class="nav-item"><a href="/eleventy-base-blog/blog/">Archive</a></li>
+					<li class="nav-item"><a href="/eleventy-base-blog/about/">About Me</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main id="skip">
+			
+<h1>Practical Object Oriented Design - Book Notes - Chapter 1</h1>
+
+<ul class="post-metadata">
+	<li><time datetime="2020-10-02">02 October 2020</time></li>
+</ul>
+
+<p>This is the first post in what I hope to be a series of posts, discussing my experience and thoughts with reading the excellent book, <a href="https://www.poodr.com/">&quot;Practical Object Oriented Design&quot;</a>, by Sandi Metz. This is mostly so I can internalize the great lessons from the book, and the best way to do that is to try and explain those lessons to others.</p>
+<p>The book itself uses Ruby as the programming language of choice to explore the principles of good object oriented design. My own examples will be from Python as that is what I am using at work.</p>
+<p>Let us now dive right into the first chapter.</p>
+<h1 id="what-is-object-oriented-design-all-about" tabindex="-1">What is Object Oriented Design all About? <a class="header-anchor" href="#what-is-object-oriented-design-all-about">#</a></h1>
+<p>Old-school programming languages like FORTRAN and C are <em>procedural</em> languages. The programs are a set of step-by-step instructions, and these instructions operate on data.</p>
+<p>In object-oriented programming languages, you instead view the world as being made up of objects that interact with each other by <em>sending messages</em>. In technical terms, your objects are described by classes, and sending a message means calling a class's method.</p>
+<p>When attempting object-oriented design (OOD), you need to shift your perspective away from procedures and modules towards these objects and messages. Merely taking procedural code and slapping classes around the functions does <em>not</em> make it object oriented.</p>
+<h1 id="what-is-design-good-for-anyway" tabindex="-1">What is Design Good for Anyway? <a class="header-anchor" href="#what-is-design-good-for-anyway">#</a></h1>
+<p>Here is an uplifting quote from the book's first chapter:</p>
+<blockquote>
+<p>The programming techniques that make code a joy to write overlap with those that most efficiently produce software.</p>
+</blockquote>
+<p>So what makes code a joy to write? Code that is clear and logical and easy to work with. In particular, code that is easy to <em>change</em>. A big point of the book, especially given it's subtitle &quot;An Agile Primer&quot;, is that it is guaranteed that your program will have to change. Maybe requirements weren't clear at the start. Maybe the program was a success and now enthusiastic clients are asking for additional features. Whatever the reason, you will need to change your code.</p>
+<p>And if your program is anything but short-lived, the time spent <em>modifying</em> the program is far greater than the time spent on the initial writing.</p>
+<p>So then design is about solving the problem of writing code that is easy to change. It's not about dazzling your coworkers with intricate patterns or architectures.</p>
+<h2 id="why-change-is-hard" tabindex="-1">Why Change is Hard <a class="header-anchor" href="#why-change-is-hard">#</a></h2>
+<p>The book goes on to explain <em>why</em> change is hard and can introduce problems when the code is not designed well:</p>
+<p>Looking at your object-oriented program, you have a bunch of objects that send each other a bunch of messages to produce the desired behaviour. For that to work, your objects need to know certain things about each other: Who to send what message to and in what format?</p>
+<p>While this knowledge is necessary to get any work done, it also creates <em>dependencies</em>. It is these dependencies that stand in the way of change: If class A depends on class B being &quot;just so&quot;, then a change to class B forces a change in class A. Before you know it, these forced changes have rippled through the entire program.</p>
+<p>Good object-oriented design is all about <em>managing</em> these dependencies. We can never completely get rid of them, but by making careful choices about the design we can limit them to the absolute minimum.</p>
+<h2 id="a-practical-definition-of-design" tabindex="-1">A Practical Definition of Design <a class="header-anchor" href="#a-practical-definition-of-design">#</a></h2>
+<p>I remember back in university, a fellow Physics student ask me (because I also took Comp Sci classes) what classes were actually for, since he was convinced you could achieve any conceivable bit of functionality just as well without them. I did not have a good reply back then because, <em>technically</em> he was right. Classes are not so much about providing functionality as they are about organizing that functionality.</p>
+<p>Sandi Metz has a very simple, practical definition of design:</p>
+<blockquote>
+<p>Every application is a collection of code; the code’s arrangement is the design.</p>
+</blockquote>
+<p>As an example of bad design, I remember my first days of learning Visual Basic 6 in high school. You had a nice drag and drop editor for user interfaces, and the control elements like clickable buttons had event-based methods like <code>on_click()</code> that the runtime environment would call for you when you actually clicked the button.</p>
+<p>These event methods were where I put <em>all</em> the application code and business logic of my programs. In terms of functionality, my programs did exactly what I wanted them to do. But when I wanted to change the user interface, I also had to carefully rearrange where the internal workings of the program took place. Truly hard work, and an example of code that's maybe not arranged in the best possible way.</p>
+<p>This example demonstrates that code has two potentially conflicting demands: Obviously, it must solve the problem that it's meant to solve. But it must <em>also</em> be written in such a way that it can easily incorporate future changes.</p>
+<p>Here it is important to make a distinction: Anticipating <em>change</em> is not the same as anticipating <em>one particular future change</em> and then pre-emptively accounting for that anticipated change. We cannot see the future and we cannot guess what additional features or requirements we will face. That is not what design is about. Instead, it is about leaving the code &quot;room to breathe&quot; so that <em>whatever</em> change actually arrives in the future can be easily incorporated.</p>
+<h1 id="the-tools-of-design" tabindex="-1">The Tools of Design <a class="header-anchor" href="#the-tools-of-design">#</a></h1>
+<p>Next, the author talks about two tools in the kit of a software engineer: Design Principles and Design Patterns. Let's take a look.</p>
+<h2 id="design-principles" tabindex="-1">Design Principles <a class="header-anchor" href="#design-principles">#</a></h2>
+<p>While design involves judgement calls, tradeoffs, and some subjective assessments, there are certain guiding principles that have emerged and become evident over the years. There is academic evidence that following these principles makes your code better (i.e., easier to change). In the course of the boook, the author will touch on many of them and go in-depth. The most famous principles are:</p>
+<ul>
+<li>SOLID: Single Responsibility, Open-Closed, Liskov-Substitution, Interface Segregation and Dependency Inversion (or Injection)</li>
+<li>DRY (Don't Repeat Yourself)</li>
+<li>Law of Demeter (LoD)</li>
+</ul>
+<p>I won't expand on them here. Stay tuned for more on them, though.</p>
+<h2 id="design-patterns" tabindex="-1">Design Patterns <a class="header-anchor" href="#design-patterns">#</a></h2>
+<p>Some problems in object-oriented design come up time and again, and so the &quot;Gang of Four&quot; (Erich Gamma, Richard Helm, Ralph Johnson, and John Vlissides) wrote a book called &quot;Design Patterns&quot; where they present &quot;simple and elegant solutions to specific problems in object-oriented software design&quot;. They have names like Singleton, Factory, Command, Adapter, Decorator, Strategy etc and are a great tool in every programmers toolbox.</p>
+<p><strong>Beware</strong> though: Many novice programmers, myself included, get overzealous when they first learn about patterns. In an attempt to appear sophisticated, they then try and cram patterns into every bit of code no matter how misplaced the pattern actually is. Use the right tool for the job!</p>
+<h1 id="the-act-of-design" tabindex="-1">The Act of Design <a class="header-anchor" href="#the-act-of-design">#</a></h1>
+<p>Now the author explains how and when to design, and first explains how design can fail. For that, there's basically two failure modes at the extremes: Too little design, or too much design.</p>
+<p>With too little design, your application quickly devolves into spaghetti code. There's a good chance that every programmer is familiar with this problem, because every programmer started out as a novice who didn't know the least bit about design.</p>
+<p>On the other hand, there's too much design. That's the aforementioned pattern zealot, or someone who wraps every little bit of code in ten layers of abstraction and indirection.</p>
+<p>There's another failure mode: Separating the act of design from the act of programming. Sometimes derisively referred to as &quot;Big Up-Front Design&quot; (BUFD), the problem with it is that it severes the all-important feedback loop between programming and designing. Ideally, your design will evolve incrementally:</p>
+<ul>
+<li>A small program is easy to write and easy to design well</li>
+<li>If you have a program that is designed well, it will be easy to change</li>
+<li>Adding a <em>small</em> change to a well-designed program allows you to arrive at a well-designed slightly bigger program</li>
+</ul>
+<p>It follows that small, incremental steps are the ticket to arrive at a well-designed big program.</p>
+<p>In this agile sense, design is simply about maintaining your ability to easily incorporate the changes of the next iteration. It is vastly different from the BFUD where you try, in advance, to specify exactly where everything will go.</p>
+<h1 id="judging-design" tabindex="-1">Judging Design <a class="header-anchor" href="#judging-design">#</a></h1>
+<p>Next up, the author discusses <em>metrics</em> for design, such as class cohesion. There are tools that analyze your code and give you a score on certain metrics, but there's no clear-cut correlation between scores and code quality. You can have high scores and bad design, because you're only looking at proxy measures.</p>
+<p>The <em>true</em> measure of a good design would be something like &quot;cost per feature over the time interval that matters&quot;. But this is incredibly hard to measure.</p>
+<p>What's this time interval thing? Well, when writing any feature, you are dealing with the trade-off of design and cost. Spending more time on making the design good costs time now, and delays the feature, but it reaps benefits further down the line in making other features cheaper to implement. There is an intricate balance: As the author points out, the advantage of having a feature done <em>right now</em> might outweigh the costs associated with fixing a rushed design. It is also a matter of skill: If you are a skilled software engineer, the extra time taken to get the design right will be small, and thus your design efforts will reach a net positive effect rather early. If, on the other hand, you are a novice, you might spend a lot of time on a design that won't even be that good, and thus the effort might actually never pay off.</p>
+<h1 id="summary" tabindex="-1">Summary <a class="header-anchor" href="#summary">#</a></h1>
+<ul>
+<li>Design is about arranging code such that it can efficiently accommodate change</li>
+<li>Code that is easy to change is a joy to work with</li>
+<li>Principles and patterns are tools, but how to apply them is an art, or a craft</li>
+<li>Avoid under- and overdesigning by understanding the theory of design and learning how to translate that into practice</li>
+</ul>
+<p>Next up, we will be looking at the first principle: The Single Responsibility Principle.</p>
+
+<ul class="links-nextprev"><li>Previous: <a href="/eleventy-base-blog/blog/2020-02-19-Law_of_demeter/">The Law of Demeter - Don&#39;t let your classes micromanage each other</a></li><li>Next: <a href="/eleventy-base-blog/blog/2020-10-30-poodr-chapter-2/">Practical Object Oriented Design - Book Notes - Chapter 2</a></li>
+</ul>
+
+		</main>
+
+		<footer></footer>
+
+		<!-- This page `/eleventy-base-blog/blog/2020-10-2-poodr-chapter-1/` was built on 2024-04-05T21:40:08.510Z -->
+	</body>
+</html>

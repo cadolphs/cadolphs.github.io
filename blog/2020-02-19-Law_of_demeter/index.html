@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>The Law of Demeter - Don&#39;t let your classes micromanage each other</title>
+		<meta name="description" content="I am writing about my experiences as a naval navel-gazer.">
+		<link rel="alternate" href="/eleventy-base-blog/feed/feed.xml" type="application/atom+xml" title="Clemens Adolpjs">
+		<link rel="alternate" href="/eleventy-base-blog/feed/feed.json" type="application/json" title="Clemens Adolpjs">
+		
+		<style>/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: #f8f8f2;
+	background: none;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #272822;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: #8292a2;
+}
+
+.token.punctuation {
+	color: #f8f8f2;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #f92672;
+}
+
+.token.boolean,
+.token.number {
+	color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #a6e22e;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+	color: #e6db74;
+}
+
+.token.keyword {
+	color: #66d9ef;
+}
+
+.token.regex,
+.token.important {
+	color: #fd971f;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+}
+
+/* Theme colors */
+:root {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #333;
+
+	--background-color: #fff;
+
+	--text-color: var(--color-gray-90);
+	--text-color-link: #082840;
+	--text-color-link-active: #5f2b48;
+	--text-color-link-visited: #17050F;
+
+	--syntax-tab-size: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--color-gray-20: #e0e0e0;
+		--color-gray-50: #C0C0C0;
+		--color-gray-90: #dad8d8;
+
+		/* --text-color is assigned to --color-gray-_ above */
+		--text-color-link: #1493fb;
+		--text-color-link-active: #6969f7;
+		--text-color-link-visited: #a6a6f8;
+
+		--background-color: #15202b;
+	}
+}
+
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	overflow-y: scroll;
+}
+body {
+	max-width: 40em;
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem;
+}
+main :first-child {
+	margin-top: 0;
+}
+
+header {
+	border-bottom: 1px dashed var(--color-gray-20);
+}
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.links-nextprev {
+	list-style: none;
+	border-top: 1px dashed var(--color-gray-20);
+	padding: 1em 0;
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+code {
+	word-break: break-all;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em;
+}
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+	padding-left: 1.5rem;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	counter-increment: start-from -1;
+	margin-bottom: 1em;
+}
+.postlist-item:before {
+	display: inline-block;
+	pointer-events: none;
+	content: "" counter(start-from, decimal-leading-zero) ". ";
+	line-height: 100%;
+	text-align: right;
+	margin-left: -1.5rem;
+}
+.postlist-date,
+.postlist-item:before {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	padding-left: .25em;
+	padding-right: .5em;
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: #aaa;
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}</style>
+	</head>
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+
+		<header>
+			<a href="/eleventy-base-blog/" class="home-link">Clemens Adolpjs</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/eleventy-base-blog/">Home</a></li>
+					<li class="nav-item"><a href="/eleventy-base-blog/blog/">Archive</a></li>
+					<li class="nav-item"><a href="/eleventy-base-blog/about/">About Me</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main id="skip">
+			
+<h1>The Law of Demeter - Don&#39;t let your classes micromanage each other</h1>
+
+<ul class="post-metadata">
+	<li><time datetime="2020-02-19">19 February 2020</time></li>
+</ul>
+
+<p>Anyone who has ever worked with a micromanaging boss or supervisor knows how demoralizing and inefficient this can be. Instead of being asked to achieve results as they are defined in your role's responsibilities, such a boss tells you in excrutiating detail what steps you should follow.</p>
+<p>Nobody likes a micromanager, and the classes you write in an object oriented language are no different there! They are much happier if you tell them what to do, in terms of their responsibilities, rather than asking them for a detailed report of their internal state and then going off on a long chain of commands.</p>
+<p>This idea is not new, of course, and relates to two important, interlinked concepts: The Law of Demeter, and the &quot;Tell, Don't Ask!&quot; principle. Let's start with a brief introduction and summary of them and then expand on what it means for our code.</p>
+<h2 id="the-law-of-demeter" tabindex="-1">The Law of Demeter <a class="header-anchor" href="#the-law-of-demeter">#</a></h2>
+<p>This law (sometimes snarkily referred to as the &quot;sometimes helpful suggestion&quot; instead) states, at a high level, that your class should not talk to strangers. How does that look like? Suppose you have class, <code>C</code>. That class has a method, <code>f</code>. Inside of <code>f</code> is a bunch of code. You might, for example, want to call some other methods from within <code>f</code>. The Law of Demeter says that you are only allowed to call methods of the following objects:</p>
+<ul>
+<li><code>C</code> itself</li>
+<li>Objects passed to <code>f</code> as arguments</li>
+<li>Any objects that were created or instantiated by <code>f</code></li>
+<li>Component objects (i.e., held in instance variables) of <code>C</code></li>
+</ul>
+<p>Anything else is considered off limits! In particular, if one of the methods that are permitted returns an object that's not in turn part of the permitted list, you cannot call any of its methods! Egregious violation of this law are referred to as <em>train wrecks</em>, and you can recognize them by a lot of dots: <code>car.get_owner().get_address().get_postcal_code()</code>. Yuck! You are micromanaging the application by asking the car to tell you who its owner is, which you then ask where they live, and the address then is supposed to hand you its postal code.</p>
+<p>This might sound overly strict, but I agree in large part with JavaDevGuy in his post <a href="https://javadevguy.wordpress.com/2017/05/14/the-genius-of-the-law-of-demeter/">The Genius of the law of Demeter</a>: It is <em>the</em> law of object oriented programming.</p>
+<h3 id="why-is-this-bad-anyway" tabindex="-1">Why is this bad, anyway? <a class="header-anchor" href="#why-is-this-bad-anyway">#</a></h3>
+<p>When violating the LoD, you are sprinkling unrelated structural knowledge throught your code. Each part of the trainwreck is a piece of knowledge that you assume you have: &quot;In this code, cars have owners, which have addresses, which have postal codes, and they are accessed through these particular methods.&quot; Your trainwreck introduces coupling where it might not be wise to do so. This makes your application hard to change and, ultimately, leads to the famed and feared Spaghetti code.</p>
+<h3 id="some-caveats-and-nuances" tabindex="-1">Some caveats and nuances <a class="header-anchor" href="#some-caveats-and-nuances">#</a></h3>
+<p>Of course, nothing is ever quite as black and white, so let's unpack a few important points about the law.</p>
+<p>First, you can technically get around the law by introducing wrapper methods: You could add a method <code>getOwnerAddressesPostalCode()</code> to the car object. But in a sense you're still violating the law. Maybe not its text, but definitely its spirit: You are still coupling a postal code to a car where it might be ill-advised.</p>
+<p>Second, contrary what you sometimes read on articles on the subject, the LoD is not <a href="https://haacked.com/archive/2009/07/14/law-of-demeter-dot-counting.aspx/">a dot-counting exercise</a>. This cuts both ways: On the one hand, just because you don't have multiple dots per line doesn't mean you don't violate the law (see above's lengthy wrapper method). On the other hand, just because you <em>do</em> have multiple dots per line doesn't mean you <em>are</em> violating it. For starters, a method you call might be returning an object that, in turn, is on the list of allowed objects. This is an important feature of so-called <em>fluent</em> interfaces. But even if an object doesn't strictly fall on above's list of allowed objects, it might still make sense to call methods on it: If that object is a <em>friend</em> of yours.</p>
+<p>A clarification, relaxation and expansion of the Law of Demeter states that you can call the methods of any object you are <em>friends</em> with. The objects in the original list above are all friends, but it doesn't stop there. Other examples of friendly classes are given in candied_orange's excellent <a href="https://softwareengineering.stackexchange.com/a/322645/161522">post</a> on the topic:</p>
+<ul>
+<li>Value objects are friendly with everyone. Especially if they are part of the domain you are writing for. Imagine trying to write code for a physics simulator where the Law of Demeter would prohibit you something like <code>wavefunction.amplitude.real</code>. In scientific programming, a lot of the objects that you deal with will be value objects.</li>
+<li>Collections should be friendly with everyone who uses them: If your class holds a list, then clearly it should be able to call a method on the list to get to one of the list's items, and then call a method on these items.</li>
+</ul>
+<h2 id="tell-don-t-ask" tabindex="-1">Tell, Don't Ask <a class="header-anchor" href="#tell-don-t-ask">#</a></h2>
+<p>When faced with a situation where you feel you <em>must</em> violate the Law of Demeter, there's a good chance the overall design is flawed. Sometimes, the violation can be resolvd in syntactic means:</p>
+<p>Imagine you have a method</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">def</span> <span class="token function">f</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> b<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    b<span class="token punctuation">.</span>get_a<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>do_something<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>then you could instead add a method to <code>b</code> that reads <code>b.tell_a_to_do_something()</code>. Of course that might just be violating the law in spirit anyway, but sometimes it's perfectly appropriate to go this route of delegation.</p>
+<p>Alternatively, if method <code>f</code> needs object <code>A</code> to get its job done, it should ask for it as a parameter:</p>
+<pre class="language-python" tabindex="0"><code class="language-python"><span class="token keyword">def</span> <span class="token function">f</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> b<span class="token punctuation">,</span> a<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    a<span class="token punctuation">.</span>do_something<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>And finally, a larger redesign of which objects exist and how they talk to each other might be in order. The guiding principle here goes back to the beginning of the post: Don't micromanage. What is it you want to accomplish? Whose responsibility is that? Tell them, but leave the execution details up to them!</p>
+<p>Another great StackOverflow <a href="https://softwareengineering.stackexchange.com/a/284146/161522">post</a> by user candied_orange talks about the SOLID design principles. In particularly the &quot;Single Responsibility Principle&quot; and the &quot;Dependency Invesion Principle&quot; (more on these later, maybe?) take you in great strides towards code that automatically won't violate the Law of Demeter.</p>
+<h1 id="conclusion" tabindex="-1">Conclusion <a class="header-anchor" href="#conclusion">#</a></h1>
+<p>At the very least, I hope to have convinced you that a long chain of method calls is a <em>code smell</em> that warrants further investigation: Are we micromanaging here, or legitimatly using domain value objects? And could we improve our design, make it more adjustable and modular, in an attempt to remove the violation? A better design might very well result from that!</p>
+
+<ul class="links-nextprev"><li>Previous: <a href="/eleventy-base-blog/blog/2020-01-17-Github-workflow/">Some common issues in feature-branch Github workflow</a></li><li>Next: <a href="/eleventy-base-blog/blog/2020-10-2-poodr-chapter-1/">Practical Object Oriented Design - Book Notes - Chapter 1</a></li>
+</ul>
+
+		</main>
+
+		<footer></footer>
+
+		<!-- This page `/eleventy-base-blog/blog/2020-02-19-Law_of_demeter/` was built on 2024-04-05T21:40:08.509Z -->
+	</body>
+</html>
