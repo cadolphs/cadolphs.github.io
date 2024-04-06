@@ -5,8 +5,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Practical Object Oriented Design - Book Notes - Chapter 4</title>
 		<meta name="description" content="Writing about software engineering">
-		<link rel="alternate" href="/eleventy-base-blog/feed/feed.xml" type="application/atom+xml" title="Clemens Adolphs">
-		<link rel="alternate" href="/eleventy-base-blog/feed/feed.json" type="application/json" title="Clemens Adolphs">
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Clemens Adolphs">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="Clemens Adolphs">
 		
 		<style>/**
  * okaidia theme for JavaScript, CSS and HTML
@@ -452,13 +452,13 @@ h2 + .header-anchor {
 		<a href="#skip" class="visually-hidden">Skip to main content</a>
 
 		<header>
-			<a href="/eleventy-base-blog/" class="home-link">Clemens Adolphs</a>
+			<a href="/" class="home-link">Clemens Adolphs</a>
 			<nav>
 				<h2 class="visually-hidden">Top level navigation menu</h2>
 				<ul class="nav">
-					<li class="nav-item"><a href="/eleventy-base-blog/">Home</a></li>
-					<li class="nav-item"><a href="/eleventy-base-blog/blog/">Archive</a></li>
-					<li class="nav-item"><a href="/eleventy-base-blog/about/">About Me</a></li>
+					<li class="nav-item"><a href="/">Home</a></li>
+					<li class="nav-item"><a href="/blog/">Archive</a></li>
+					<li class="nav-item"><a href="/about/">About Me</a></li>
 				</ul>
 			</nav>
 		</header>
@@ -570,10 +570,10 @@ https://sequencediagram.org/</p>
 <p>To be context-independent means being able to cooperate with other objects without knowing <em>who they are</em> and <em>what they do</em>. Using dependency injection takes care of the <em>who</em> part. Rethinking the sequence of messages, and working toward simplifying the messages, takes care of the <em>what they do</em> part.</p>
 <p>I like the author's example here with the Trip and the Mechanic. The key technique the example in this subsection introduces is: You can simplify (and thus potentially unify) the message you send to your collaborator by <em>not</em> passing in lots of arguments, but rather having a public interface that lets your collaborator ask you for those arguments themselves.</p>
 <p>Maybe we can use the restaurant example again:
-<img src="/eleventy-base-blog/images/poodr_4/burger_1.png" alt="Sequence Diagram for ordering a burger explicitly"></p>
+<img src="/images/poodr_4/burger_1.png" alt="Sequence Diagram for ordering a burger explicitly"></p>
 <p>Here we see a Customer ordering a burger, which needs a bit of extra info about the side dish. Sending messages like this requires having a method for each of the different things you could order in different ways. It means <code>Customer</code> expects in its context an object <code>Waiter</code> that understands all sorts of messages.</p>
 <p>If we have our objects collaborate more, however, we can have a simpler context:
-<img src="/eleventy-base-blog/images/poodr_4/burger_2.png" alt="Sequence Diagram for ordering a burger with less context"></p>
+<img src="/images/poodr_4/burger_2.png" alt="Sequence Diagram for ordering a burger with less context"></p>
 <p>and we'd imagine that it's the customer's interface's job to provide methods to inquire about certain preferences, like doneness of a steak, whether Pepsi is okay, and if there's allergies.</p>
 <h2 id="trusting-other-objects" tabindex="-1">Trusting Other Objects <a class="header-anchor" href="#trusting-other-objects">#</a></h2>
 <p>In the real world, you are only comfortable asking for the what without specifying the how if you have trust that your counterpart is capable of fulfilling that request. When writing your own classes and objects, you should always trust an object that it is capable of fulfilling its responsibility!</p>
@@ -652,13 +652,13 @@ A<span class="token punctuation">(</span><span class="token punctuation">)</span
 <p>What the Law of Demeter <em>really</em> wants to tell us is that we are either missing objects, or methods, that would allow our objects to communicate in a more useful way! According to the author, these <em>train wrecks</em> happen if we focus too much on the objects we already have: This leads us to chain method calls together to assemble some desired behavior. If instead we focus on the <em>messages</em> that we <em>should</em> be sending, we will discover which objects need to receive them:</p>
 <p>In the preceding examples, we discussed why it's bad if one class tells another class in too much detail exactly what to do. Even worse, then, is if we have one class that tells another class to tell another class exactly what to do.</p>
 
-<ul class="links-nextprev"><li>Previous: <a href="/eleventy-base-blog/blog/2020-11-18-poodr-chapter-3/">Practical Object Oriented Design - Book Notes - Chapter 3</a></li><li>Next: <a href="/eleventy-base-blog/blog/2020-12-03-poodr-chapter5/">Practical Object Oriented Design - Book Notes - Chapter 5</a></li>
+<ul class="links-nextprev"><li>Previous: <a href="/blog/2020-11-18-poodr-chapter-3/">Practical Object Oriented Design - Book Notes - Chapter 3</a></li><li>Next: <a href="/blog/2020-12-03-poodr-chapter5/">Practical Object Oriented Design - Book Notes - Chapter 5</a></li>
 </ul>
 
 		</main>
 
 		<footer></footer>
 
-		<!-- This page `/eleventy-base-blog/blog/2020-11-24-poodr-chapter4/` was built on 2024-04-05T21:43:13.629Z -->
+		<!-- This page `/blog/2020-11-24-poodr-chapter4/` was built on 2024-04-06T00:31:19.638Z -->
 	</body>
 </html>

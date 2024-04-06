@@ -2,87 +2,87 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2019-12-4-Advent-of-code-2019/</loc>
+		<loc>https://cadolphs.github.io/blog/2019-12-4-Advent-of-code-2019/</loc>
 		<lastmod>2019-12-04</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2020-01-17-Github-workflow/</loc>
+		<loc>https://cadolphs.github.io/blog/2020-01-17-Github-workflow/</loc>
 		<lastmod>2020-01-17</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2020-02-19-Law_of_demeter/</loc>
+		<loc>https://cadolphs.github.io/blog/2020-02-19-Law_of_demeter/</loc>
 		<lastmod>2020-02-19</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2020-10-2-poodr-chapter-1/</loc>
+		<loc>https://cadolphs.github.io/blog/2020-10-2-poodr-chapter-1/</loc>
 		<lastmod>2020-10-02</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2020-10-30-poodr-chapter-2/</loc>
+		<loc>https://cadolphs.github.io/blog/2020-10-30-poodr-chapter-2/</loc>
 		<lastmod>2020-10-30</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2020-11-18-poodr-chapter-3/</loc>
+		<loc>https://cadolphs.github.io/blog/2020-11-18-poodr-chapter-3/</loc>
 		<lastmod>2020-11-18</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2020-11-24-poodr-chapter4/</loc>
+		<loc>https://cadolphs.github.io/blog/2020-11-24-poodr-chapter4/</loc>
 		<lastmod>2020-11-24</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2020-12-03-poodr-chapter5/</loc>
+		<loc>https://cadolphs.github.io/blog/2020-12-03-poodr-chapter5/</loc>
 		<lastmod>2020-12-03</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2020-12-27-poodr-chapter6/</loc>
+		<loc>https://cadolphs.github.io/blog/2020-12-27-poodr-chapter6/</loc>
 		<lastmod>2020-12-27</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2021-01-08-poodr-chapter7/</loc>
+		<loc>https://cadolphs.github.io/blog/2021-01-08-poodr-chapter7/</loc>
 		<lastmod>2021-01-08</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2021-01-13-poodr-chapter8/</loc>
+		<loc>https://cadolphs.github.io/blog/2021-01-13-poodr-chapter8/</loc>
 		<lastmod>2021-01-13</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2021-01-22-poodr-chapter9/</loc>
+		<loc>https://cadolphs.github.io/blog/2021-01-22-poodr-chapter9/</loc>
 		<lastmod>2021-01-22</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/2021-06-15-rust-python-1/</loc>
+		<loc>https://cadolphs.github.io/blog/2021-06-15-rust-python-1/</loc>
 		<lastmod>2021-06-15</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/about/</loc>
-		<lastmod>2024-04-05</lastmod>
+		<loc>https://cadolphs.github.io/about/</loc>
+		<lastmod>2024-04-06</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/blog/</loc>
-		<lastmod>2024-04-05</lastmod>
+		<loc>https://cadolphs.github.io/blog/</loc>
+		<lastmod>2024-04-06</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/</loc>
-		<lastmod>2024-04-05</lastmod>
+		<loc>https://cadolphs.github.io/</loc>
+		<lastmod>2024-04-06</lastmod>
 	</url>
 	
 	<url>
-		<loc>https://cadolphs.github.io/eleventy-base-blog/tags/</loc>
-		<lastmod>2024-04-05</lastmod>
+		<loc>https://cadolphs.github.io/tags/</loc>
+		<lastmod>2024-04-06</lastmod>
 	</url>
 </urlset>
