@@ -3,13 +3,13 @@ title: Intro to Building Python Extensions in Rust
 date: 2021-06-15
 ---
 
-Rust is _the_ cool new systems programming language. It promises to be much safer than C/C++ while also offering a great toolchain for building 
+Rust is _the_ cool new systems programming language. It promises to be much safer than C/C++ while also offering a great toolchain for building
 and deploying, and lots of quality-of-life features we know and love from higher-level languages.
 
-One obvious use-case for any high-speed systems programming language is to write custom Python extensions in it. That way you get the 
+One obvious use-case for any high-speed systems programming language is to write custom Python extensions in it. That way you get the
 ease of use from Python without compromising on speed.
 
-To make this all work, let's figure out step by step how to build a custom Python extension in Rust. I'm assuming familiarity with both these 
+To make this all work, let's figure out step by step how to build a custom Python extension in Rust. I'm assuming familiarity with both these
 languages; this isn't meant to be a Python or Rust tutorial.
 
 # Simplest Case
@@ -48,7 +48,7 @@ cargo new --lib rust_module
 
 This creates a new directory and basic package settings file (`Cargo.toml`) that we'll have to edit. We'll add the `cdylib` library target, and add PyO3 to the dependencies:
 
-```
+```toml
 [package]
 name = "rust_module"
 version = "0.1.0"
@@ -70,7 +70,7 @@ I'm adding the `rlib` target in case I want to add tests or code that can call t
 
 Apparently to compile our code on Mac, we also need to add an additional config file
 
-```
+```toml
 [target.x86_64-apple-darwin]
 rustflags = [
   "-C", "link-arg=-undefined",
@@ -105,11 +105,11 @@ fn rust_module(py: Python, m: &PyModule) -> PyResult<()> {
 }
 ```
 
-This seems quite nice and concise, actually. We grab all the stuff from the pyo3 prelude, as well as the `wrap_pyfunction` macro. The prelude gives us access to a number of commonly used definitions. 
+This seems quite nice and concise, actually. We grab all the stuff from the pyo3 prelude, as well as the `wrap_pyfunction` macro. The prelude gives us access to a number of commonly used definitions.
 
-So to turn an ordinary function into a function we can call from Python, all we have to do is tag it with `#[pyfuncion]` and wrap the return type in a `PyResult`. 
+So to turn an ordinary function into a function we can call from Python, all we have to do is tag it with `#[pyfuncion]` and wrap the return type in a `PyResult`.
 
-Then we need to add code that makes the function known to the Python module. For that, we have the `#[pymodule]` tag. 
+Then we need to add code that makes the function known to the Python module. For that, we have the `#[pymodule]` tag.
 
 The function name tagged with `pymodule` must be exactly the name of the module.
 
