@@ -495,35 +495,33 @@ answer <span class="token operator">=</span> rust_function<span class="token pun
 <p>So, it seems we want to create a <strong>library crate</strong> where we tell Rust to use a particular <em>type</em> of crate to make a <em>shared library</em>. I'll try to do that via <code>cargo new</code>.</p>
 <pre class="language-bash" tabindex="0"><code class="language-bash"><span class="token function">cargo</span> new <span class="token parameter variable">--lib</span> rust_module</code></pre>
 <p>This creates a new directory and basic package settings file (<code>Cargo.toml</code>) that we'll have to edit. We'll add the <code>cdylib</code> library target, and add PyO3 to the dependencies:</p>
-<pre><code>[package]
-name = &quot;rust_module&quot;
-version = &quot;0.1.0&quot;
-authors = [&quot;Clemens Adolphs &lt;clemens.adolphs@gmail.com&gt;&quot;]
-edition = &quot;2018&quot;
+<pre class="language-toml" tabindex="0"><code class="language-toml"><span class="token punctuation">[</span><span class="token table class-name">package</span><span class="token punctuation">]</span>
+<span class="token key property">name</span> <span class="token punctuation">=</span> <span class="token string">"rust_module"</span>
+<span class="token key property">version</span> <span class="token punctuation">=</span> <span class="token string">"0.1.0"</span>
+<span class="token key property">authors</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token string">"Clemens Adolphs &lt;clemens.adolphs@gmail.com>"</span><span class="token punctuation">]</span>
+<span class="token key property">edition</span> <span class="token punctuation">=</span> <span class="token string">"2018"</span>
 
-[lib]
-name = &quot;rust_module&quot;
-crate-type = [&quot;cdylib&quot;, &quot;rlib&quot;]
+<span class="token punctuation">[</span><span class="token table class-name">lib</span><span class="token punctuation">]</span>
+<span class="token key property">name</span> <span class="token punctuation">=</span> <span class="token string">"rust_module"</span>
+<span class="token key property">crate-type</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token string">"cdylib"</span><span class="token punctuation">,</span> <span class="token string">"rlib"</span><span class="token punctuation">]</span>
 
-[dependencies.pyo3]
-version = &quot;0.13.2&quot;
-features = [&quot;extension-module&quot;]
-</code></pre>
+<span class="token punctuation">[</span><span class="token table class-name">dependencies.pyo3</span><span class="token punctuation">]</span>
+<span class="token key property">version</span> <span class="token punctuation">=</span> <span class="token string">"0.13.2"</span>
+<span class="token key property">features</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token string">"extension-module"</span><span class="token punctuation">]</span></code></pre>
 <p>I'm adding the <code>rlib</code> target in case I want to add tests or code that can call this library from within Rust. The <code>cdylib</code> target tells cargo to compile a dynamic library (dylib) that code from C can talk to, or other programs that know how to talk to C libraries.</p>
 <h2 id="macos-cargo-config" tabindex="-1">MacOS: .cargo/config <a class="header-anchor" href="#macos-cargo-config">#</a></h2>
 <p>Apparently to compile our code on Mac, we also need to add an additional config file</p>
-<pre><code>[target.x86_64-apple-darwin]
-rustflags = [
-  &quot;-C&quot;, &quot;link-arg=-undefined&quot;,
-  &quot;-C&quot;, &quot;link-arg=dynamic_lookup&quot;,
-]
+<pre class="language-toml" tabindex="0"><code class="language-toml"><span class="token punctuation">[</span><span class="token table class-name">target.x86_64-apple-darwin</span><span class="token punctuation">]</span>
+<span class="token key property">rustflags</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span>
+  <span class="token string">"-C"</span><span class="token punctuation">,</span> <span class="token string">"link-arg=-undefined"</span><span class="token punctuation">,</span>
+  <span class="token string">"-C"</span><span class="token punctuation">,</span> <span class="token string">"link-arg=dynamic_lookup"</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span>
 
-[target.aarch64-apple-darwin]
-rustflags = [
-  &quot;-C&quot;, &quot;link-arg=-undefined&quot;,
-  &quot;-C&quot;, &quot;link-arg=dynamic_lookup&quot;,
-]
-</code></pre>
+<span class="token punctuation">[</span><span class="token table class-name">target.aarch64-apple-darwin</span><span class="token punctuation">]</span>
+<span class="token key property">rustflags</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span>
+  <span class="token string">"-C"</span><span class="token punctuation">,</span> <span class="token string">"link-arg=-undefined"</span><span class="token punctuation">,</span>
+  <span class="token string">"-C"</span><span class="token punctuation">,</span> <span class="token string">"link-arg=dynamic_lookup"</span><span class="token punctuation">,</span>
+<span class="token punctuation">]</span></code></pre>
 <h2 id="the-lib-rs" tabindex="-1">The lib.rs <a class="header-anchor" href="#the-lib-rs">#</a></h2>
 <p>Following along with the guide, we can now write our actual code. Let's first do it in the way the guide does, with the function returning a Python result directly.</p>
 <pre class="language-rust" tabindex="0"><code class="language-rust"><span class="token keyword">use</span> <span class="token namespace">pyo3<span class="token punctuation">::</span>prelude<span class="token punctuation">::</span></span><span class="token operator">*</span><span class="token punctuation">;</span>
@@ -574,6 +572,6 @@ answer <span class="token operator">=</span> rust_function<span class="token pun
 
 		<footer></footer>
 
-		<!-- This page `/blog/2021-06-15-rust-python-1/` was built on 2024-04-10T20:05:11.622Z -->
+		<!-- This page `/blog/2021-06-15-rust-python-1/` was built on 2024-04-10T22:39:03.383Z -->
 	</body>
 </html>

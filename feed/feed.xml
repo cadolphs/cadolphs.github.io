@@ -40,35 +40,33 @@ answer &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; rust_function
 &lt;p&gt;So, it seems we want to create a &lt;strong&gt;library crate&lt;/strong&gt; where we tell Rust to use a particular &lt;em&gt;type&lt;/em&gt; of crate to make a &lt;em&gt;shared library&lt;/em&gt;. I&#39;ll try to do that via &lt;code&gt;cargo new&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&quot;language-bash&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;&lt;span class=&quot;token function&quot;&gt;cargo&lt;/span&gt; new &lt;span class=&quot;token parameter variable&quot;&gt;--lib&lt;/span&gt; rust_module&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;This creates a new directory and basic package settings file (&lt;code&gt;Cargo.toml&lt;/code&gt;) that we&#39;ll have to edit. We&#39;ll add the &lt;code&gt;cdylib&lt;/code&gt; library target, and add PyO3 to the dependencies:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;[package]
-name = &amp;quot;rust_module&amp;quot;
-version = &amp;quot;0.1.0&amp;quot;
-authors = [&amp;quot;Clemens Adolphs &amp;lt;clemens.adolphs@gmail.com&amp;gt;&amp;quot;]
-edition = &amp;quot;2018&amp;quot;
+&lt;pre class=&quot;language-toml&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-toml&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token table class-name&quot;&gt;package&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;token key property&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;rust_module&quot;&lt;/span&gt;
+&lt;span class=&quot;token key property&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;0.1.0&quot;&lt;/span&gt;
+&lt;span class=&quot;token key property&quot;&gt;authors&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;Clemens Adolphs &amp;lt;clemens.adolphs@gmail.com&gt;&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;token key property&quot;&gt;edition&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2018&quot;&lt;/span&gt;
 
-[lib]
-name = &amp;quot;rust_module&amp;quot;
-crate-type = [&amp;quot;cdylib&amp;quot;, &amp;quot;rlib&amp;quot;]
+&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token table class-name&quot;&gt;lib&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;token key property&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;rust_module&quot;&lt;/span&gt;
+&lt;span class=&quot;token key property&quot;&gt;crate-type&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;cdylib&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;rlib&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
 
-[dependencies.pyo3]
-version = &amp;quot;0.13.2&amp;quot;
-features = [&amp;quot;extension-module&amp;quot;]
-&lt;/code&gt;&lt;/pre&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token table class-name&quot;&gt;dependencies.pyo3&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;token key property&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;0.13.2&quot;&lt;/span&gt;
+&lt;span class=&quot;token key property&quot;&gt;features&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token string&quot;&gt;&quot;extension-module&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;I&#39;m adding the &lt;code&gt;rlib&lt;/code&gt; target in case I want to add tests or code that can call this library from within Rust. The &lt;code&gt;cdylib&lt;/code&gt; target tells cargo to compile a dynamic library (dylib) that code from C can talk to, or other programs that know how to talk to C libraries.&lt;/p&gt;
 &lt;h2 id=&quot;macos-cargo-config&quot; tabindex=&quot;-1&quot;&gt;MacOS: .cargo/config &lt;a class=&quot;header-anchor&quot; href=&quot;https://cadolphs.github.io/blog/2021-06-15-rust-python-1/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;Apparently to compile our code on Mac, we also need to add an additional config file&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;[target.x86_64-apple-darwin]
-rustflags = [
-  &amp;quot;-C&amp;quot;, &amp;quot;link-arg=-undefined&amp;quot;,
-  &amp;quot;-C&amp;quot;, &amp;quot;link-arg=dynamic_lookup&amp;quot;,
-]
+&lt;pre class=&quot;language-toml&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-toml&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token table class-name&quot;&gt;target.x86_64-apple-darwin&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;token key property&quot;&gt;rustflags&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;
+  &lt;span class=&quot;token string&quot;&gt;&quot;-C&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;link-arg=-undefined&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;token string&quot;&gt;&quot;-C&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;link-arg=dynamic_lookup&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
 
-[target.aarch64-apple-darwin]
-rustflags = [
-  &amp;quot;-C&amp;quot;, &amp;quot;link-arg=-undefined&amp;quot;,
-  &amp;quot;-C&amp;quot;, &amp;quot;link-arg=dynamic_lookup&amp;quot;,
-]
-&lt;/code&gt;&lt;/pre&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;token table class-name&quot;&gt;target.aarch64-apple-darwin&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;token key property&quot;&gt;rustflags&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;
+  &lt;span class=&quot;token string&quot;&gt;&quot;-C&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;link-arg=-undefined&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;token string&quot;&gt;&quot;-C&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;link-arg=dynamic_lookup&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id=&quot;the-lib-rs&quot; tabindex=&quot;-1&quot;&gt;The lib.rs &lt;a class=&quot;header-anchor&quot; href=&quot;https://cadolphs.github.io/blog/2021-06-15-rust-python-1/&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;Following along with the guide, we can now write our actual code. Let&#39;s first do it in the way the guide does, with the function returning a Python result directly.&lt;/p&gt;
 &lt;pre class=&quot;language-rust&quot; tabindex=&quot;0&quot;&gt;&lt;code class=&quot;language-rust&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;token namespace&quot;&gt;pyo3&lt;span class=&quot;token punctuation&quot;&gt;::&lt;/span&gt;prelude&lt;span class=&quot;token punctuation&quot;&gt;::&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
