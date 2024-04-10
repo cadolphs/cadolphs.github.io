@@ -6,4 +6,4 @@ eleventyNavigation:
 ---
 # About Me
 
-I am a person that writes stuff.
+Let me work on that. As you can tell from the posts here, I do software.
