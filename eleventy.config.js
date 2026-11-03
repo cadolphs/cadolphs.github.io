@@ -1,9 +1,8 @@
 const { DateTime } = require("luxon");
 const markdownItAnchor = require("markdown-it-anchor");
 
-const pluginRss = require("@11ty/eleventy-plugin-rss");
+const { default: pluginRss } = require("@11ty/eleventy-plugin-rss");
 const pluginSyntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
-const pluginBundle = require("@11ty/eleventy-plugin-bundle");
 const pluginNavigation = require("@11ty/eleventy-navigation");
 const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
 
@@ -35,7 +34,10 @@ module.exports = function(eleventyConfig) {
 	});
 	eleventyConfig.addPlugin(pluginNavigation);
 	eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
-	eleventyConfig.addPlugin(pluginBundle);
+
+	// Bundles (built into Eleventy v3; previously @11ty/eleventy-plugin-bundle)
+	eleventyConfig.addBundle("css");
+	eleventyConfig.addBundle("js");
 
 	// Filters
 	eleventyConfig.addFilter("readableDate", (dateObj, format, zone) => {
@@ -88,7 +90,8 @@ module.exports = function(eleventyConfig) {
 				ariaHidden: false,
 			}),
 			level: [1,2,3,4],
-			slugify: eleventyConfig.getFilter("slugify")
+			// Eleventy v3 slugify drops apostrophes ("don't" -> "dont"); keep v2 anchors ("don-t") so existing links work.
+			slugify: s => eleventyConfig.getFilter("slugify")(s.replace(/'/g, " "))
 		});
 	});
 
